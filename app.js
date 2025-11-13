@@ -156,7 +156,10 @@ function renderKpis() {
   const openStages = ["new", "contacted", "qualified", "showing", "offer"];
   const openLeads = demoLeads.filter((l) => openStages.includes(l.stage));
 
-  document.getElementById("kpiOpenLeads").textContent = openLeads.length;
+  const openLeadsEl = document.getElementById("kpiOpenLeads");
+  if (!openLeadsEl) return; // თუ დეშბორდი არაა, არაფერი ვაკეთოთ
+
+  openLeadsEl.textContent = openLeads.length;
 
   const activeProps = demoProperties.filter((p) => p.status === "active");
   document.getElementById("kpiActiveProperties").textContent =
@@ -185,6 +188,8 @@ function renderPipeline() {
   ];
 
   const container = document.getElementById("pipelineStages");
+  if (!container) return;
+
   container.innerHTML = "";
 
   stages.forEach((stage) => {
@@ -209,6 +214,9 @@ function renderPipeline() {
 
 function renderShowingsAndTasks() {
   const showingsList = document.getElementById("todayShowingsList");
+  const tasksList = document.getElementById("todayTasksList");
+  if (!showingsList || !tasksList) return;
+
   showingsList.innerHTML = "";
 
   if (demoShowings.length === 0) {
@@ -227,7 +235,6 @@ function renderShowingsAndTasks() {
     });
   }
 
-  const tasksList = document.getElementById("todayTasksList");
   tasksList.innerHTML = "";
 
   if (demoTasks.length === 0) {
@@ -248,8 +255,13 @@ function renderShowingsAndTasks() {
 }
 
 function renderSlaRisks() {
-  const now = new Date();
   const list = document.getElementById("slaRiskList");
+  const chip = document.getElementById("slaRiskCountChip");
+  const slaPill = document.getElementById("slaStatusPill");
+
+  if (!list || !chip || !slaPill) return;
+
+  const now = new Date();
   list.innerHTML = "";
 
   const atRisk = demoLeads.filter((l) => {
@@ -258,8 +270,7 @@ function renderSlaRisks() {
     return due.getTime() - now.getTime() < 60 * 60 * 1000; // <1h
   });
 
-  document.getElementById("slaRiskCountChip").textContent = atRisk.length;
-  const slaPill = document.getElementById("slaStatusPill");
+  chip.textContent = atRisk.length;
 
   if (atRisk.length === 0) {
     list.innerHTML = `<li class="list-empty">ამ ეტაპზე SLA რისკი არ ფიქსირდება. ✅</li>`;
@@ -289,6 +300,8 @@ function renderSlaRisks() {
 
 function renderActivityFeed() {
   const feed = document.getElementById("activityFeed");
+  if (!feed) return;
+
   feed.innerHTML = "";
 
   if (!demoActivities.length) {
@@ -316,50 +329,89 @@ function setupQuickActions() {
   const propBtn = document.getElementById("quickCreatePropertyBtn");
   const clearActivityBtn = document.getElementById("clearActivityBtn");
 
-  leadBtn.addEventListener("click", () => {
-    const id = `G-${String(125 + demoLeads.length).padStart(5, "0")}`;
-    demoLeads.unshift({
-      id,
-      name: "ახალი demo ლიდი",
-      stage: "new",
-      budgetGel: 200000,
-      createdAt: new Date().toISOString(),
-      lastContactAt: null,
-      slaDueAt: new Date(Date.now() + 30 * 60000).toISOString(),
+  if (leadBtn) {
+    leadBtn.addEventListener("click", () => {
+      const id = `G-${String(125 + demoLeads.length).padStart(5, "0")}`;
+      demoLeads.unshift({
+        id,
+        name: "ახალი demo ლიდი",
+        stage: "new",
+        budgetGel: 200000,
+        createdAt: new Date().toISOString(),
+        lastContactAt: null,
+        slaDueAt: new Date(Date.now() + 30 * 60000).toISOString(),
+      });
+      demoActivities.unshift({
+        time: new Date().toLocaleTimeString("ka-GE"),
+        text: `დაემატა ახალი demo ლიდი: ${id}`,
+        type: "lead",
+      });
+      refreshDashboard();
     });
-    demoActivities.unshift({
-      time: new Date().toLocaleTimeString("ka-GE"),
-      text: `დაემატა ახალი demo ლიდი: ${id}`,
-      type: "lead",
-    });
-    refreshDashboard();
-  });
+  }
 
-  propBtn.addEventListener("click", () => {
-    const id = `P-DEMO-${demoProperties.length + 1}`;
-    demoProperties.unshift({
-      id,
-      address: "Demo მისამართი, თბილისი",
-      district: "თბილისი",
-      type: "sale",
-      status: "active",
-      priceGel: 300000,
+  if (propBtn) {
+    propBtn.addEventListener("click", () => {
+      const id = `P-DEMO-${demoProperties.length + 1}`;
+      demoProperties.unshift({
+        id,
+        address: "Demo მისამართი, თბილისი",
+        district: "თბილისი",
+        type: "sale",
+        status: "active",
+        priceGel: 300000,
+      });
+      demoActivities.unshift({
+        time: new Date().toLocaleTimeString("ka-GE"),
+        text: `დაემატა demo ობიექტი: ${id}`,
+        type: "property",
+      });
+      refreshDashboard();
     });
-    demoActivities.unshift({
-      time: new Date().toLocaleTimeString("ka-GE"),
-      text: `დაემატა demo ობიექტი: ${id}`,
-      type: "property",
-    });
-    refreshDashboard();
-  });
+  }
 
-  clearActivityBtn.addEventListener("click", () => {
-    demoActivities = [];
-    refreshDashboard();
+  if (clearActivityBtn) {
+    clearActivityBtn.addEventListener("click", () => {
+      demoActivities = [];
+      refreshDashboard();
+    });
+  }
+}
+
+// ---- Navigation between sections --------------------------------------
+
+function setupNavigation() {
+  const navItems = document.querySelectorAll(".nav-item[data-section]");
+  const sections = document.querySelectorAll(".page-section");
+
+  navItems.forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = item.getAttribute("data-section");
+      const targetId = `${target}Section`;
+
+      // აქტიური მენიუ
+      navItems.forEach((i) => i.classList.remove("nav-item-active"));
+      item.classList.add("nav-item-active");
+
+      // სექციები
+      sections.forEach((sec) => {
+        if (sec.id === targetId) {
+          sec.classList.add("page-section-active");
+        } else {
+          sec.classList.remove("page-section-active");
+        }
+      });
+
+      // თუ მთავარ დაფაზე გადავედით – დეშბორდი refresh
+      if (target === "dashboard") {
+        refreshDashboard();
+      }
+    });
   });
 }
 
-// ---- Refresh all -------------------------------------------------------
+// ---- Refresh dashboard-only parts -------------------------------------
 
 function refreshDashboard() {
   renderKpis();
@@ -373,5 +425,6 @@ function refreshDashboard() {
 
 document.addEventListener("DOMContentLoaded", () => {
   setupQuickActions();
+  setupNavigation();
   refreshDashboard();
 });
