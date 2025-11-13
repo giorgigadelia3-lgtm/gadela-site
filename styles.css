@@ -1156,4 +1156,15 @@ body {
     padding-top: 8px;
   }
 }
+/* Page sections switcher */
+.page-section {
+  display: none;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.page-section-active {
+  display: flex;
+}
+
 
