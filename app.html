@@ -1,65 +1,477 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ka">
 <head>
-  <meta charset="utf-8">
-  <title>GADELA CRM — დეშბორდი</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>GADELA CRM • უძრავი ქონების პლატფორმა</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="app-page">
-  <div class="app-layout">
+<body class="crm-body">
+  <div class="app-shell">
     <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="sidebar-header row center gap">
-        <div class="logo-circle sm">
-          <img src="assets/logo.svg" alt="logo">
-        </div>
-        <div>
-          <p class="xs muted">GADELA</p>
-          <strong class="xs">Real-Estate CRM</strong>
+      <div class="sidebar-header">
+        <img src="logo.svg" alt="Gadela CRM" class="logo">
+        <div class="brand">
+          <span class="brand-main">GADELA</span>
+          <span class="brand-sub">Real Estate CRM</span>
         </div>
       </div>
-      <nav class="sidebar-nav">
-        <button class="nav-item active" data-view="overview">Overview</button>
-        <button class="nav-item" data-view="leads">Leads</button>
-        <button class="nav-item" data-view="properties">Properties</button>
-        <button class="nav-item" data-view="deals">Deals</button>
-        <button class="nav-item" data-view="tasks">Tasks</button>
-        <button class="nav-item" data-view="reports">Reports</button>
-        <button class="nav-item" data-view="audit">Audit Log</button>
+
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-dot"></span> მთავარი დაფა
+        </button>
+        <button class="nav-item" data-view="leads">
+          <span class="nav-dot"></span> ლიდები
+        </button>
+        <button class="nav-item" data-view="properties">
+          <span class="nav-dot"></span> ობიექტები
+        </button>
+        <button class="nav-item" data-view="contacts">
+          <span class="nav-dot"></span> კონტაქტები
+        </button>
+        <button class="nav-item" data-view="deals">
+          <span class="nav-dot"></span> Deals & საკომისიოები
+        </button>
+        <button class="nav-item" data-view="tasks">
+          <span class="nav-dot"></span> დავალებები / კალენდარი
+        </button>
+        <button class="nav-item" data-view="reports">
+          <span class="nav-dot"></span> რეპორტები & KPI
+        </button>
+        <button class="nav-item" data-view="settings">
+          <span class="nav-dot"></span> პარამეტრები
+        </button>
       </nav>
-      <div class="sidebar-footer xs muted">
-        Demo ვერსია • მონაცემები ლოკალურად ინახება (localStorage).
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="avatar">G</div>
+          <div>
+            <div class="user-name">გიორგი გადელია</div>
+            <div class="user-role">Director</div>
+          </div>
+        </div>
       </div>
     </aside>
 
     <!-- Main -->
-    <div class="app-main">
-      <!-- Topbar -->
-      <header class="app-topbar row between center">
-        <div class="row center gap">
-          <h1 class="app-title">GADELA CRM</h1>
-          <span class="badge xs">Demo • No backend yet</span>
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="view-title">მთავარი დაფა</h1>
+          <p class="topbar-subtitle">
+            ერთი ერთიანი პლატფორმა: ლიდები → ობიექტები → Deals → შემოსავლები.
+          </p>
         </div>
-        <div class="row center gap">
-          <input id="globalSearch" class="search-input" placeholder="ძებნა (Ctrl + K)">
-          <div class="avatar">GG</div>
+        <div class="topbar-actions">
+          <button id="quick-add-lead" class="btn primary">+ ახალი ლიდი</button>
+          <button id="quick-add-property" class="btn ghost">+ ახალი ობიექტი</button>
         </div>
       </header>
 
-      <!-- Content -->
-      <main class="app-content">
-        <!-- Dynamic views ერცვლება JS-დან -->
-        <section id="view-overview" class="view active"></section>
-        <section id="view-leads" class="view"></section>
-        <section id="view-properties" class="view"></section>
-        <section id="view-deals" class="view"></section>
-        <section id="view-tasks" class="view"></section>
-        <section id="view-reports" class="view"></section>
-        <section id="view-audit" class="view"></section>
-      </main>
-    </div>
+      <!-- DASHBOARD -->
+      <section class="view visible" id="view-dashboard">
+        <div class="grid-3">
+          <div class="card metric">
+            <div class="metric-label">ღია ლიდები</div>
+            <div class="metric-value" id="metric-open-leads">0</div>
+            <div class="metric-footnote">New / Contacted / Qualified</div>
+          </div>
+          <div class="card metric">
+            <div class="metric-label">აქტიური ობიექტები</div>
+            <div class="metric-value" id="metric-active-properties">0</div>
+            <div class="metric-footnote">Active / Showing</div>
+          </div>
+          <div class="card metric">
+            <div class="metric-label">აქტიური deals</div>
+            <div class="metric-value" id="metric-active-deals">0</div>
+            <div class="metric-footnote">Showing → Offer → Closing</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h2>Pipeline Overview</h2>
+              <span class="pill">MVP</span>
+            </div>
+            <div class="pipeline-mini" id="pipeline-mini"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>ბოლო აქტივობები</h2>
+            </div>
+            <ul class="activity-list" id="activity-feed"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEADS -->
+      <section class="view" id="view-leads">
+        <div class="section-header">
+          <div>
+            <h2>ლიდების Pipeline</h2>
+            <p class="section-subtitle">
+              New → Contacted → Qualified → Showing → Offer → Won/Lost
+            </p>
+          </div>
+          <div class="section-actions">
+            <button class="btn primary" id="btn-open-lead-form">+ ახალი ლიდი</button>
+          </div>
+        </div>
+
+        <div class="kanban" id="leads-kanban"></div>
+
+        <div class="drawer" id="lead-form-drawer">
+          <div class="drawer-header">
+            <h3 id="lead-form-title">ახალი ლიდი</h3>
+            <button class="icon-btn" id="close-lead-form">&times;</button>
+          </div>
+          <form id="lead-form" class="drawer-body">
+            <label class="field">
+              <span>კლიენტის სახელი</span>
+              <input type="text" name="name" required placeholder="მაგ: გიორგი ბეგაშვილი">
+            </label>
+            <label class="field">
+              <span>ტელეფონი</span>
+              <input type="tel" name="phone" placeholder="+995 5__ ___ ___">
+            </label>
+            <label class="field">
+              <span>ელ.ფოსტა</span>
+              <input type="email" name="email" placeholder="client@example.com">
+            </label>
+            <label class="field">
+              <span>ბიუჯეტი (₾)</span>
+              <input type="number" name="budget" min="0" step="1000" placeholder="150000">
+            </label>
+            <label class="field">
+              <span>სასურველი უბანი</span>
+              <input type="text" name="district" placeholder="ვაკე, საბურთალო...">
+            </label>
+            <label class="field">
+              <span>სტატუსი</span>
+              <select name="status">
+                <option value="New">New</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Qualified">Qualified</option>
+                <option value="Showing">Showing</option>
+                <option value="Offer">Offer</option>
+                <option value="Won">Won</option>
+                <option value="Lost">Lost</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>წყარო</span>
+              <select name="source">
+                <option value="Manual">Manual</option>
+                <option value="Website">Website Form</option>
+                <option value="Facebook">Facebook Ads</option>
+                <option value="Google">Google Ads</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Referral">Referral</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>შენიშვნა</span>
+              <textarea name="notes" rows="3"></textarea>
+            </label>
+            <div class="drawer-footer">
+              <button type="button" class="btn ghost" id="reset-lead-form">
+                გასუფთავება
+              </button>
+              <button type="submit" class="btn primary">
+                შენახვა
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- PROPERTIES -->
+      <section class="view" id="view-properties">
+        <div class="section-header">
+          <div>
+            <h2>ობიექტების კატალოგი</h2>
+            <p class="section-subtitle">საცხოვრებელი, კომერციული, ქირავნება/გაყიდვა</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn primary" id="btn-open-property-form">+ ახალი ობიექტი</button>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <input id="property-search" class="input" placeholder="ძებნა მისამართით, უბნით ან კოდით...">
+          <select id="property-type-filter" class="input">
+            <option value="">ყველა ტიპი</option>
+            <option value="SALE">გაყიდვა</option>
+            <option value="RENT">ქირავნება</option>
+          </select>
+          <select id="property-status-filter" class="input">
+            <option value="">ყველა სტატუსი</option>
+            <option value="Active">Active</option>
+            <option value="Showing">Showing</option>
+            <option value="Reserved">Reserved</option>
+            <option value="Under Offer">Under Offer</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+
+        <table class="table" id="properties-table">
+          <thead>
+            <tr>
+              <th>კოდი</th>
+              <th>მისამართი</th>
+              <th>უბანი</th>
+              <th>ტიპი</th>
+              <th>ფასი</th>
+              <th>სტატუსი</th>
+              <th>აგენტი</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="drawer" id="property-form-drawer">
+          <div class="drawer-header">
+            <h3 id="property-form-title">ახალი ობიექტი</h3>
+            <button class="icon-btn" id="close-property-form">&times;</button>
+          </div>
+          <form id="property-form" class="drawer-body">
+            <label class="field">
+              <span>ობიექტის კოდი</span>
+              <input type="text" name="code" required placeholder="მაგ: G-00123">
+            </label>
+            <label class="field">
+              <span>მისამართი</span>
+              <input type="text" name="address" required>
+            </label>
+            <label class="field">
+              <span>უბანი</span>
+              <input type="text" name="district">
+            </label>
+            <label class="field">
+              <span>ტიპი</span>
+              <select name="type">
+                <option value="SALE">გაყიდვა</option>
+                <option value="RENT">ქირავნება</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>ფასი (₾)</span>
+              <input type="number" name="price" min="0" step="1000" required>
+            </label>
+            <label class="field">
+              <span>სტატუსი</span>
+              <select name="status">
+                <option value="Active">Active</option>
+                <option value="Showing">Showing</option>
+                <option value="Reserved">Reserved</option>
+                <option value="Under Offer">Under Offer</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>პასუხისმგებელი აგენტი</span>
+              <input type="text" name="owner" placeholder="აგენტის სახელი">
+            </label>
+            <label class="field">
+              <span>მონიშნე მთავარი მახასიათებლები</span>
+              <input type="text" name="tags" placeholder="3 ოთახი, 2 სველი წერტილი, აივანი...">
+            </label>
+            <div class="drawer-footer">
+              <button type="button" class="btn ghost" id="reset-property-form">
+                გასუფთავება
+              </button>
+              <button type="submit" class="btn primary">
+                შენახვა
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- CONTACTS -->
+      <section class="view" id="view-contacts">
+        <div class="section-header">
+          <div>
+            <h2>კონტაქტები</h2>
+            <p class="section-subtitle">Buyers, Sellers, Landlords, Tenants</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn primary" id="btn-open-contact-form">+ ახალი კონტაქტი</button>
+          </div>
+        </div>
+
+        <table class="table" id="contacts-table">
+          <thead>
+            <tr>
+              <th>სახელი</th>
+              <th>როლი</th>
+              <th>ტელეფონი</th>
+              <th>ელ.ფოსტა</th>
+              <th>საკონტაქტო პრეფერენცია</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="drawer" id="contact-form-drawer">
+          <div class="drawer-header">
+            <h3 id="contact-form-title">ახალი კონტაქტი</h3>
+            <button class="icon-btn" id="close-contact-form">&times;</button>
+          </div>
+          <form id="contact-form" class="drawer-body">
+            <label class="field">
+              <span>სახელი და გვარი</span>
+              <input type="text" name="name" required>
+            </label>
+            <label class="field">
+              <span>ტიპი</span>
+              <select name="type">
+                <option value="Buyer">Buyer</option>
+                <option value="Seller">Seller</option>
+                <option value="Landlord">Landlord</option>
+                <option value="Tenant">Tenant</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>ტელეფონი</span>
+              <input type="tel" name="phone">
+            </label>
+            <label class="field">
+              <span>ელ.ფოსტა</span>
+              <input type="email" name="email">
+            </label>
+            <label class="field">
+              <span>საკომუნიკაციო არხი</span>
+              <select name="channel">
+                <option value="Phone">Phone</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Telegram">Telegram</option>
+                <option value="Email">Email</option>
+              </select>
+            </label>
+            <div class="drawer-footer">
+              <button type="button" class="btn ghost" id="reset-contact-form">
+                გასუფთავება
+              </button>
+              <button type="submit" class="btn primary">შენახვა</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- DEALS -->
+      <section class="view" id="view-deals">
+        <div class="section-header">
+          <div>
+            <h2>Deals & საკომისიოები</h2>
+            <p class="section-subtitle">
+              მარტივი pipeline – Deals დაკავშირებული ლიდებსა და ობიექტებთან.
+            </p>
+          </div>
+        </div>
+
+        <table class="table" id="deals-table">
+          <thead>
+            <tr>
+              <th>Deal</th>
+              <th>კლიენტი</th>
+              <th>ობიექტი</th>
+              <th>სტადია</th>
+              <th>ფასი</th>
+              <th>საკომისიო (Რც%)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- TASKS -->
+      <section class="view" id="view-tasks">
+        <div class="section-header">
+          <div>
+            <h2>დავალებები & კალენდარი</h2>
+            <p class="section-subtitle">ჩვენებები, ზარები, შემხსენებლები</p>
+          </div>
+        </div>
+
+        <table class="table" id="tasks-table">
+          <thead>
+          <tr>
+            <th>თარიღი</th>
+            <th>დრო</th>
+            <th>ტიპი</th>
+            <th>ვინ</th>
+            <th>დაკავშირებული</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="view" id="view-reports">
+        <div class="section-header">
+          <div>
+            <h2>რეპორტები & KPI (MVP)</h2>
+            <p class="section-subtitle">
+              მარტივი ანალიტიკა – მოგვიანებით შევძლებთ ღრმა Dashboard-ებს.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h2>Conversion Funnel</h2>
+            </div>
+            <ul class="kpi-list" id="kpi-funnel"></ul>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>სტატისტიკა წყაროებით</h2>
+            </div>
+            <ul class="kpi-list" id="kpi-sources"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" id="view-settings">
+        <div class="section-header">
+          <div>
+            <h2>პარამეტრები (Demo)</h2>
+            <p class="section-subtitle">
+              Multi-tenant, RBAC, Integrations – შემდეგ ეტაპზე დეტალურად.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Account პროფილი</h3>
+            <p class="muted">
+              აქ მოგვიანებით იქნება სააგენტოს დეტალები, გადასახადები, გეგმები (Starter / Pro / Enterprise).
+            </p>
+          </div>
+          <div class="card">
+            <h3>Integrations (Placeholder)</h3>
+            <ul class="settings-list">
+              <li>Google Calendar</li>
+              <li>Outlook Calendar</li>
+              <li>WhatsApp Business / Twilio</li>
+              <li>Telegram Bot</li>
+              <li>Facebook Lead Ads</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="app.js"></script>

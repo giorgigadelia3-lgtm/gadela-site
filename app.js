@@ -1,601 +1,724 @@
-// Simple GADELA CRM front-end demo (no backend)
+// GADELA CRM – Frontend MVP (pure JS, no backend yet)
 
-const state = {
-  leads: [],
-  properties: [],
-  deals: [],
-  tasks: [],
-  audit: [],
+const STORAGE_KEYS = {
+  leads: 'gadelacrm_leads',
+  properties: 'gadelacrm_properties',
+  contacts: 'gadelacrm_contacts',
+  deals: 'gadelacrm_deals',
+  tasks: 'gadelacrm_tasks',
+  activity: 'gadelacrm_activity'
 };
 
-const LS_KEY = "gadela-demo-state-v1";
+const LEAD_STATUSES = [
+  'New',
+  'Contacted',
+  'Qualified',
+  'Showing',
+  'Offer',
+  'Won',
+  'Lost'
+];
 
-function loadState() {
+function loadFromStorage(key, fallback) {
   try {
-    const saved = localStorage.getItem(LS_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      Object.assign(state, parsed);
-      return;
-    }
-  } catch (e) {
-    console.warn("Failed to parse saved state", e);
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
   }
-  seedDemoData();
-  saveState();
 }
 
-function saveState() {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(state));
-  } catch (e) {
-    console.warn("Failed to save state", e);
+function saveToStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function uuid() {
+  return 'xxxx-4xxx-yxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+function nowISO() {
+  return new Date().toISOString();
+}
+
+/* === STATE === */
+let state = {
+  leads: [],
+  properties: [],
+  contacts: [],
+  deals: [],
+  tasks: [],
+  activity: []
+};
+
+function initState() {
+  state.leads = loadFromStorage(STORAGE_KEYS.leads, []);
+  state.properties = loadFromStorage(STORAGE_KEYS.properties, []);
+  state.contacts = loadFromStorage(STORAGE_KEYS.contacts, []);
+  state.deals = loadFromStorage(STORAGE_KEYS.deals, []);
+  state.tasks = loadFromStorage(STORAGE_KEYS.tasks, []);
+  state.activity = loadFromStorage(STORAGE_KEYS.activity, []);
+
+  // If empty – seed with small demo data
+  if (!state.leads.length && !state.properties.length) {
+    seedDemoData();
   }
+}
+
+function persistState() {
+  saveToStorage(STORAGE_KEYS.leads, state.leads);
+  saveToStorage(STORAGE_KEYS.properties, state.properties);
+  saveToStorage(STORAGE_KEYS.contacts, state.contacts);
+  saveToStorage(STORAGE_KEYS.deals, state.deals);
+  saveToStorage(STORAGE_KEYS.tasks, state.tasks);
+  saveToStorage(STORAGE_KEYS.activity, state.activity);
 }
 
 function seedDemoData() {
-  state.leads = [
+  const lead1 = {
+    id: uuid(),
+    name: 'გიორგი ბეგაშვილი',
+    phone: '+995 555 123 456',
+    email: 'giorgi@example.com',
+    budget: 220000,
+    district: 'ვაკე',
+    status: 'Qualified',
+    source: 'Facebook',
+    notes: 'მეტწილად ახალ აშენებულს ეძებს.',
+    createdAt: nowISO()
+  };
+  const lead2 = {
+    id: uuid(),
+    name: 'ნინო ქავთარაძე',
+    phone: '+995 577 000 111',
+    email: 'nino@example.com',
+    budget: 1500,
+    district: 'საბურთალო',
+    status: 'Showing',
+    source: 'Website',
+    notes: 'ქირავნობა, 2 ოთახი.',
+    createdAt: nowISO()
+  };
+  const lead3 = {
+    id: uuid(),
+    name: 'სანდრო ონიანი',
+    phone: '+995 593 555 777',
+    email: '',
+    budget: 320000,
+    district: 'დიღომი',
+    status: 'New',
+    source: 'Referral',
+    notes: '',
+    createdAt: nowISO()
+  };
+
+  const prop1 = {
+    id: uuid(),
+    code: 'G-00123',
+    address: 'ჭავჭავაძის 15',
+    district: 'ვაკე',
+    type: 'SALE',
+    price: 230000,
+    status: 'Active',
+    owner: 'სალომე საღინაძე',
+    tags: '3 ოთახი, აივანი, პარკინგი'
+  };
+  const prop2 = {
+    id: uuid(),
+    code: 'G-00124',
+    address: 'ცაგარელის 4',
+    district: 'საბურთალო',
+    type: 'RENT',
+    price: 1600,
+    status: 'Showing',
+    owner: 'ნია ქარუმიძე',
+    tags: '2 ოთახი, ავეჯით'
+  };
+
+  const contact1 = {
+    id: uuid(),
+    name: lead1.name,
+    type: 'Buyer',
+    phone: lead1.phone,
+    email: lead1.email,
+    channel: 'WhatsApp'
+  };
+
+  const deal1 = {
+    id: uuid(),
+    title: 'გიორგი ბეგაშვილი • G-00123',
+    leadName: lead1.name,
+    propertyCode: prop1.code,
+    stage: 'Offer',
+    price: 230000,
+    commissionPct: 3
+  };
+
+  const task1 = {
+    id: uuid(),
+    date: new Date().toISOString().slice(0, 10),
+    time: '15:00',
+    type: 'Showing',
+    who: 'ნინო ქავთარაძე',
+    related: 'G-00124'
+  };
+
+  state.leads = [lead1, lead2, lead3];
+  state.properties = [prop1, prop2];
+  state.contacts = [contact1];
+  state.deals = [deal1];
+  state.tasks = [task1];
+  state.activity = [
     {
-      id: "L-1001",
-      name: "ნიკა გიორგაძე",
-      phone: "+995 599 123456",
-      source: "Facebook Ads",
-      status: "New",
-      score: 80,
-      budget: 250000,
-      district: "ვაკე",
-      slaMinutes: 15,
-      slaRemaining: -5,
-    },
-    {
-      id: "L-1002",
-      name: "თამარ ჩხეიძე",
-      phone: "+995 555 777222",
-      source: "Referral",
-      status: "Contacted",
-      score: 65,
-      budget: 150000,
-      district: "საბურთალო",
-      slaMinutes: 30,
-      slaRemaining: 12,
-    },
-    {
-      id: "L-1003",
-      name: "Giga LLC",
-      phone: "+995 593 000333",
-      source: "MyHome",
-      status: "Qualified",
-      score: 92,
-      budget: 600000,
-      district: "დიღომი",
-      slaMinutes: 60,
-      slaRemaining: 40,
-    },
-  ];
-
-  state.properties = [
-    {
-      id: "P-2001",
-      title: "ახალი კორპუსი • 3 ოთახი",
-      district: "ვაკე",
-      type: "SALE",
-      price: 240000,
-      area: 86,
-      status: "Active",
-    },
-    {
-      id: "P-2002",
-      title: "ბინა გაქირავებაზე • 2 ოთახი",
-      district: "საბურთალო",
-      type: "RENT",
-      price: 900,
-      area: 60,
-      status: "Showing",
-    },
-    {
-      id: "P-2003",
-      title: "კომერციული ფართი",
-      district: "ვერა",
-      type: "RENT",
-      price: 2800,
-      area: 120,
-      status: "Reserved",
-    },
-  ];
-
-  state.deals = [
-    {
-      id: "D-3001",
-      leadId: "L-1001",
-      propertyId: "P-2001",
-      stage: "Offer",
-      value: 240000,
-      agent: "თეო ქავთარაძე",
-      closeProb: 70,
-    },
-    {
-      id: "D-3002",
-      leadId: "L-1002",
-      propertyId: "P-2002",
-      stage: "Showing",
-      value: 900 * 12,
-      agent: "გიორგი გაბელია",
-      closeProb: 40,
-    },
-    {
-      id: "D-3003",
-      leadId: "L-1003",
-      propertyId: "P-2003",
-      stage: "Won",
-      value: 2800 * 12,
-      agent: "სოფო დევდარიანი",
-      closeProb: 100,
-    },
-  ];
-
-  state.tasks = [
-    {
-      id: "T-4001",
-      title: "დაუდასტურე ჩვენება თამართან",
-      due: "დღეს 18:30",
-      type: "Call",
-      owner: "გიორგი",
-      status: "Open",
-    },
-    {
-      id: "T-4002",
-      title: "კონტრაქტის გადაგზავნა Giga LLC-სთვის",
-      due: "ხვალ",
-      type: "Email",
-      owner: "თეო",
-      status: "In progress",
-    },
-  ];
-
-  state.audit = [
-    {
-      id: "A-1",
-      actor: "გიორგი (Director)",
-      entity: "Deal D-3003",
-      action: "stage_changed Offer → Won",
-      time: "დღეს • 11:22",
-    },
-    {
-      id: "A-2",
-      actor: "თეო (Agent)",
-      entity: "Lead L-1001",
-      action: "status_changed New → Contacted",
-      time: "გუშინ • 16:05",
-    },
-  ];
-}
-
-/* -------- Rendering -------- */
-
-function $(selector) {
-  return document.querySelector(selector);
-}
-
-function setView(viewId) {
-  document.querySelectorAll(".view").forEach((v) => {
-    v.classList.toggle("active", v.id === `view-${viewId}`);
-  });
-  document.querySelectorAll(".sidebar .nav-item").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.view === viewId);
-  });
-
-  switch (viewId) {
-    case "overview":
-      renderOverview();
-      break;
-    case "leads":
-      renderLeads();
-      break;
-    case "properties":
-      renderProperties();
-      break;
-    case "deals":
-      renderDeals();
-      break;
-    case "tasks":
-      renderTasks();
-      break;
-    case "reports":
-      renderReports();
-      break;
-    case "audit":
-      renderAudit();
-      break;
-  }
-}
-
-function renderOverview() {
-  const totalLeads = state.leads.length;
-  const openDeals = state.deals.filter((d) => d.stage !== "Won" && d.stage !== "Lost");
-  const wonDeals = state.deals.filter((d) => d.stage === "Won");
-  const mrr = wonDeals.reduce((sum, d) => sum + d.value, 0) / 12;
-
-  const el = $("#view-overview");
-  el.innerHTML = `
-    <div class="app-grid3">
-      <div class="app-card">
-        <div class="metric-title">ღია ლიდები</div>
-        <div class="metric-value">${totalLeads}</div>
-        <div class="metric-sub">New / Contacted / Qualified</div>
-      </div>
-      <div class="app-card">
-        <div class="metric-title">აქტიური დილები</div>
-        <div class="metric-value">${openDeals.length}</div>
-        <div class="metric-sub">სტადიები: Showing → Offer → Negotiation</div>
-      </div>
-      <div class="app-card">
-        <div class="metric-title"> სავარაუდო MRR ₾</div>
-        <div class="metric-value">₾${mrr.toLocaleString("ka-GE", {
-          maximumFractionDigits: 0,
-        })}</div>
-        <div class="metric-sub">Won დილებიდან</div>
-      </div>
-    </div>
-
-    <h2 class="mt-lg" style="font-size:14px;color:#9ca3af">Deals pipeline</h2>
-    <div class="kanban">
-      ${["New", "Showing", "Offer", "Won"].map(renderDealColumn).join("")}
-    </div>
-  `;
-}
-
-function renderDealColumn(stage) {
-  const deals = state.deals.filter((d) =>
-    stage === "New" ? d.stage === "New" : d.stage === stage
-  );
-  return `
-    <div class="kanban-column">
-      <div class="kanban-title">
-        <span>${stage}</span>
-        <span class="kanban-count">${deals.length}</span>
-      </div>
-      ${deals
-        .map(
-          (d) => `
-        <div class="card-sm">
-          <div class="card-sm-title">${d.id}</div>
-          <div class="card-sm-meta">
-            ₾${d.value.toLocaleString("ka-GE")} • ${d.agent}<br>
-            Close prob: ${d.closeProb}%
-          </div>
-        </div>
-      `
-        )
-        .join("")}
-    </div>
-  `;
-}
-
-function renderLeads() {
-  const el = $("#view-leads");
-  const rows = state.leads
-    .map((lead) => {
-      let badgeClass = "badge-open";
-      if (lead.status === "Contacted") badgeClass = "badge-warm";
-      if (lead.status === "Qualified") badgeClass = "badge-open";
-      if (lead.status === "Cold") badgeClass = "badge-cold";
-      const slaBadge =
-        lead.slaRemaining < 0
-          ? `<span class="badge-xs badge-sla">SLA −${Math.abs(
-              lead.slaRemaining
-            )} წთ</span>`
-          : `<span class="badge-xs badge-open">SLA +${lead.slaRemaining} წთ</span>`;
-      return `
-      <tr>
-        <td>${lead.id}</td>
-        <td>${lead.name}</td>
-        <td>${lead.phone}</td>
-        <td>${lead.district}</td>
-        <td>₾${lead.budget.toLocaleString("ka-GE")}</td>
-        <td><span class="badge-xs ${badgeClass}">${lead.status}</span></td>
-        <td>${lead.source}</td>
-        <td>${slaBadge}</td>
-      </tr>
-    `;
-    })
-    .join("");
-
-  el.innerHTML = `
-    <h2 style="font-size:15px;margin-bottom:4px;">Leads &amp; SLA</h2>
-    <p class="xs" style="color:#9ca3af">
-      ეს არის demo მონაცემები. Production ვერსიაში ლიდები შემოვა ვებ-ფორმიდან,
-      FB Lead Ads-იდან, WhatsApp-იდან და სხვა არხებიდან.
-    </p>
-
-    <div class="filters-row">
-      <select class="select" id="leadStatusFilter">
-        <option value="">სტატუსი — ყველა</option>
-        <option value="New">New</option>
-        <option value="Contacted">Contacted</option>
-        <option value="Qualified">Qualified</option>
-      </select>
-      <select class="select" id="leadDistrictFilter">
-        <option value="">უბანი — ყველა</option>
-        <option value="ვაკე">ვაკე</option>
-        <option value="საბურთალო">საბურთალო</option>
-        <option value="დიღომი">დიღომი</option>
-      </select>
-    </div>
-
-    <div class="table-wrapper">
-      <table class="table" id="leadsTable">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>კლიენტი</th>
-            <th>ტელეფონი</th>
-            <th>უბანი</th>
-            <th>ბიუჯეტი</th>
-            <th>სტატუსი</th>
-            <th>წყარო</th>
-            <th>SLA</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows}
-        </tbody>
-      </table>
-    </div>
-  `;
-
-  $("#leadStatusFilter").addEventListener("change", filterLeads);
-  $("#leadDistrictFilter").addEventListener("change", filterLeads);
-}
-
-function filterLeads() {
-  const status = $("#leadStatusFilter").value;
-  const district = $("#leadDistrictFilter").value;
-
-  const tbody = $("#leadsTable tbody");
-  tbody.innerHTML = state.leads
-    .filter((l) => (status ? l.status === status : true))
-    .filter((l) => (district ? l.district === district : true))
-    .map((lead) => {
-      let badgeClass = "badge-open";
-      if (lead.status === "Contacted") badgeClass = "badge-warm";
-      if (lead.status === "Qualified") badgeClass = "badge-open";
-      if (lead.status === "Cold") badgeClass = "badge-cold";
-      const slaBadge =
-        lead.slaRemaining < 0
-          ? `<span class="badge-xs badge-sla">SLA −${Math.abs(
-              lead.slaRemaining
-            )} წთ</span>`
-          : `<span class="badge-xs badge-open">SLA +${lead.slaRemaining} წთ</span>`;
-
-      return `
-        <tr>
-          <td>${lead.id}</td>
-          <td>${lead.name}</td>
-          <td>${lead.phone}</td>
-          <td>${lead.district}</td>
-          <td>₾${lead.budget.toLocaleString("ka-GE")}</td>
-          <td><span class="badge-xs ${badgeClass}">${lead.status}</span></td>
-          <td>${lead.source}</td>
-          <td>${slaBadge}</td>
-        </tr>
-      `;
-    })
-    .join("");
-}
-
-function renderProperties() {
-  const el = $("#view-properties");
-  const rows = state.properties
-    .map(
-      (p) => `
-    <tr>
-      <td>${p.id}</td>
-      <td>${p.title}</td>
-      <td>${p.district}</td>
-      <td>${p.type === "SALE" ? "გაყიდვა" : "ქირავნება"}</td>
-      <td>${p.area} მ²</td>
-      <td>₾${p.price.toLocaleString("ka-GE")}</td>
-      <td>${p.status}</td>
-    </tr>
-  `
-    )
-    .join("");
-
-  el.innerHTML = `
-    <h2 style="font-size:15px;margin-bottom:4px;">Properties Catalog</h2>
-    <p class="xs" style="color:#9ca3af">
-      V1 demo: ობიექტების სტრუქტურირებული სია. Production ვერსიაში იქნება
-      ფოტოების გალერეა, სტატუსები, მეპი და პორტალებთან სინქი.
-    </p>
-    <div class="table-wrapper">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>ობიექტი</th>
-            <th>უბანი</th>
-            <th>ტიპი</th>
-            <th>ფართი</th>
-            <th>ფასი</th>
-            <th>სტატუსი</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-function renderDeals() {
-  const el = $("#view-deals");
-  el.innerHTML = `
-    <h2 style="font-size:15px;margin-bottom:4px;">Deals Pipeline</h2>
-    <p class="xs" style="color:#9ca3af">
-      კანბანი სტადიებით: New → Showing → Offer → Won/Lost.
-    </p>
-    <div class="kanban">
-      ${["New", "Showing", "Offer", "Won"].map(renderDealColumn).join("")}
-    </div>
-  `;
-}
-
-function renderTasks() {
-  const el = $("#view-tasks");
-  const rows = state.tasks
-    .map(
-      (t) => `
-    <tr>
-      <td>${t.id}</td>
-      <td>${t.title}</td>
-      <td>${t.type}</td>
-      <td>${t.owner}</td>
-      <td>${t.due}</td>
-      <td>${t.status}</td>
-    </tr>
-  `
-    )
-    .join("");
-
-  el.innerHTML = `
-    <h2 style="font-size:15px;margin-bottom:4px;">Tasks &amp; Calendar</h2>
-    <p class="xs" style="color:#9ca3af">
-      GA4 / Outlook Calendar ინტეგრაცია იქნება შემდეგ ეტაპზე. ახლა ხედავ
-      demo task-ებს ტაბულარულ სახეში.
-    </p>
-    <div class="table-wrapper">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Task</th>
-            <th>ტიპი</th>
-            <th>პასუხისმგებელი</th>
-            <th>ვადა</th>
-            <th>სტატუსი</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-function renderReports() {
-  const el = $("#view-reports");
-  const leadToDealRate =
-    state.leads.length ? ((state.deals.length / state.leads.length) * 100).toFixed(1) : 0;
-
-  el.innerHTML = `
-    <h2 style="font-size:15px;margin-bottom:4px;">Reporting &amp; KPI</h2>
-    <p class="xs" style="color:#9ca3af">
-      ეს არის მხოლოდ high-level demo. სრულ ვერსიაში იქნება ფილტრირებადი დეშბორდები,
-      ექსპორტი და source-ების ROI.
-    </p>
-    <div class="app-grid3 mt-lg">
-      <div class="app-card">
-        <div class="metric-title">Lead → Deal Conversion</div>
-        <div class="metric-value">${leadToDealRate}%</div>
-        <div class="metric-sub">ყველა ღია ლიდიდან</div>
-      </div>
-      <div class="app-card">
-        <div class="metric-title">Deals count</div>
-        <div class="metric-value">${state.deals.length}</div>
-        <div class="metric-sub">Pipeline stages + Won</div>
-      </div>
-      <div class="app-card">
-        <div class="metric-title">Properties in catalog</div>
-        <div class="metric-value">${state.properties.length}</div>
-        <div class="metric-sub">SALE + RENT</div>
-      </div>
-    </div>
-  `;
-}
-
-function renderAudit() {
-  const el = $("#view-audit");
-  const items = state.audit
-    .map(
-      (a) => `
-    <div class="audit-item">
-      <strong>${a.actor}</strong> • <span style="color:#9ca3af">${a.time}</span><br>
-      <span style="color:#9ca3af">${a.entity}</span> — ${a.action}
-    </div>
-  `
-    )
-    .join("");
-
-  el.innerHTML = `
-    <h2 style="font-size:15px;margin-bottom:4px;">Audit Log</h2>
-    <p class="xs" style="color:#9ca3af">
-      Production ვერსიაში AuditLog შეინახება Postgres-ში, ამოიტვირთება მხოლოდ
-      Director/Auditor როლისთვის და ექნება გაფილტვრა entity-ებისა და თარიღის მიხედვით.
-    </p>
-    <div class="audit-list">
-      ${items}
-    </div>
-  `;
-}
-
-/* -------- Global search (Ctrl+K) -------- */
-
-function activateGlobalSearch() {
-  const input = document.getElementById("globalSearch");
-  if (!input) return;
-  input.focus();
-  input.select();
-}
-
-function handleGlobalSearch() {
-  const q = $("#globalSearch").value.toLowerCase();
-  if (!q) return;
-
-  const foundLead = state.leads.find(
-    (l) =>
-      l.id.toLowerCase().includes(q) ||
-      l.name.toLowerCase().includes(q) ||
-      l.phone.includes(q)
-  );
-  if (foundLead) {
-    setView("leads");
-    // პატარა highlight-ს უბრალოდ ვტოვებთ search-ზე
-    return;
-  }
-
-  const foundProp = state.properties.find(
-    (p) =>
-      p.id.toLowerCase().includes(q) ||
-      p.title.toLowerCase().includes(q) ||
-      p.district.toLowerCase().includes(q)
-  );
-  if (foundProp) {
-    setView("properties");
-    return;
-  }
-}
-
-/* -------- Init -------- */
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadState();
-  setView("overview");
-
-  document.querySelectorAll(".sidebar .nav-item").forEach((btn) => {
-    btn.addEventListener("click", () => setView(btn.dataset.view));
-  });
-
-  const searchInput = $("#globalSearch");
-  if (searchInput) {
-    searchInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        handleGlobalSearch();
-      }
-    });
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-      e.preventDefault();
-      activateGlobalSearch();
+      id: uuid(),
+      time: nowISO(),
+      message: 'დაემატა demo მონაცემები (3 ლიდი, 2 ობიექტი, 1 deal).'
     }
+  ];
+
+  persistState();
+}
+
+/* === UI HELPERS === */
+function formatGel(n) {
+  if (n == null || isNaN(n)) return '-';
+  return (
+    new Intl.NumberFormat('ka-GE', {
+      maximumFractionDigits: 0
+    }).format(n) + ' ₾'
+  );
+}
+
+function addActivity(message) {
+  state.activity.unshift({ id: uuid(), time: nowISO(), message });
+  state.activity = state.activity.slice(0, 20);
+  saveToStorage(STORAGE_KEYS.activity, state.activity);
+  renderActivityFeed();
+}
+
+/* === NAVIGATION === */
+function setupNavigation() {
+  const navButtons = document.querySelectorAll('.nav-item');
+  const views = document.querySelectorAll('.view');
+  const titleEl = document.getElementById('view-title');
+
+  const titles = {
+    dashboard: 'მთავარი დაფა',
+    leads: 'ლიდების მართვა',
+    properties: 'ობიექტების კატალოგი',
+    contacts: 'კონტაქტების ბაზა',
+    deals: 'Deals & საკომისიოები',
+    tasks: 'დავალებები & კალენდარი',
+    reports: 'რეპორტები & KPI',
+    settings: 'პარამეტრები'
+  };
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const view = btn.dataset.view;
+
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      views.forEach(v => v.classList.remove('visible'));
+      const target = document.getElementById(`view-${view}`);
+      if (target) target.classList.add('visible');
+
+      titleEl.textContent = titles[view] || 'GADELA CRM';
+    });
   });
+}
+
+/* === RENDER FUNCTIONS === */
+
+// Dashboard
+function renderMetrics() {
+  const openStatuses = ['New', 'Contacted', 'Qualified', 'Showing', 'Offer'];
+  const openLeads = state.leads.filter(l => openStatuses.includes(l.status));
+  const activeProps = state.properties.filter(p =>
+    ['Active', 'Showing'].includes(p.status)
+  );
+  const activeDeals = state.deals.filter(d =>
+    ['Showing', 'Offer', 'Closing'].includes(d.stage || 'Offer')
+  );
+
+  document.getElementById('metric-open-leads').textContent = openLeads.length;
+  document.getElementById('metric-active-properties').textContent =
+    activeProps.length;
+  document.getElementById('metric-active-deals').textContent =
+    activeDeals.length;
+}
+
+function renderPipelineMini() {
+  const container = document.getElementById('pipeline-mini');
+  container.innerHTML = '';
+  const total = state.leads.length || 1;
+  LEAD_STATUSES.forEach(status => {
+    const count = state.leads.filter(l => l.status === status).length;
+    const bar = document.createElement('div');
+    bar.className = 'pipeline-mini-bar';
+
+    const fill = document.createElement('div');
+    fill.className = 'pipeline-mini-fill';
+
+    let color = '#22c55e';
+    if (status === 'New') color = '#38bdf8';
+    else if (status === 'Contacted') color = '#a855f7';
+    else if (status === 'Lost') color = '#ef4444';
+
+    fill.style.background = color;
+    fill.style.transform = `scaleX(${count / total})`;
+    fill.style.transformOrigin = 'left';
+
+    bar.appendChild(fill);
+    container.appendChild(bar);
+  });
+}
+
+function renderActivityFeed() {
+  const ul = document.getElementById('activity-feed');
+  if (!ul) return;
+  ul.innerHTML = '';
+  state.activity.forEach(a => {
+    const li = document.createElement('li');
+    const dt = new Date(a.time);
+    li.innerHTML = `
+      <div>${a.message}</div>
+      <div class="activity-time">${dt.toLocaleString('ka-GE')}</div>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+// Leads Kanban
+function renderLeadsKanban() {
+  const container = document.getElementById('leads-kanban');
+  container.innerHTML = '';
+
+  LEAD_STATUSES.forEach(status => {
+    const column = document.createElement('div');
+    column.className = 'kanban-column';
+    column.dataset.status = status;
+
+    const header = document.createElement('div');
+    header.className = 'kanban-column-header';
+    const count = state.leads.filter(l => l.status === status).length;
+    header.innerHTML = `
+      <span>${status}</span>
+      <span class="kanban-count">${count}</span>
+    `;
+
+    const list = document.createElement('div');
+
+    state.leads
+      .filter(l => l.status === status)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .forEach(lead => {
+        const card = document.createElement('div');
+        card.className = 'lead-card';
+        card.dataset.id = lead.id;
+        card.innerHTML = `
+          <div class="lead-name">${lead.name || 'უსახელო ლიდი'}</div>
+          <div class="lead-meta">
+            ${lead.phone || ''} ${lead.phone && lead.budget ? ' • ' : ''} ${
+          lead.budget ? formatGel(lead.budget) : ''
+        }
+          </div>
+          <div class="lead-tags">
+            ${
+              lead.district
+                ? `<span class="lead-tag">${lead.district}</span>`
+                : ''
+            }
+            ${
+              lead.source
+                ? `<span class="lead-tag">Src: ${lead.source}</span>`
+                : ''
+            }
+          </div>
+        `;
+        card.addEventListener('dblclick', () => openLeadForEdit(lead.id));
+        list.appendChild(card);
+      });
+
+    column.appendChild(header);
+    column.appendChild(list);
+    container.appendChild(column);
+  });
+}
+
+// Properties
+function renderPropertiesTable() {
+  const tbody = document.querySelector('#properties-table tbody');
+  const search = (document.getElementById('property-search') || {}).value || '';
+  const type = (document.getElementById('property-type-filter') || {})
+    .value;
+  const status = (document.getElementById('property-status-filter') || {})
+    .value;
+
+  tbody.innerHTML = '';
+
+  state.properties
+    .filter(p => {
+      const text =
+        (p.code || '') +
+        ' ' +
+        (p.address || '') +
+        ' ' +
+        (p.district || '') +
+        ' ' +
+        (p.owner || '');
+      if (search && !text.toLowerCase().includes(search.toLowerCase()))
+        return false;
+      if (type && p.type !== type) return false;
+      if (status && p.status !== status) return false;
+      return true;
+    })
+    .forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${p.code}</td>
+        <td>${p.address}</td>
+        <td>${p.district || '-'}</td>
+        <td>${p.type === 'SALE' ? 'გაყიდვა' : 'ქირავნება'}</td>
+        <td>${formatGel(p.price)}</td>
+        <td>${p.status}</td>
+        <td>${p.owner || '-'}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+}
+
+// Contacts
+function renderContactsTable() {
+  const tbody = document.querySelector('#contacts-table tbody');
+  tbody.innerHTML = '';
+  state.contacts.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.name}</td>
+      <td>${c.type}</td>
+      <td>${c.phone || '-'}</td>
+      <td>${c.email || '-'}</td>
+      <td>${c.channel || '-'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Deals
+function renderDealsTable() {
+  const tbody = document.querySelector('#deals-table tbody');
+  tbody.innerHTML = '';
+  state.deals.forEach(d => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${d.title}</td>
+      <td>${d.leadName || '-'}</td>
+      <td>${d.propertyCode || '-'}</td>
+      <td>${d.stage || 'Offer'}</td>
+      <td>${formatGel(d.price)}</td>
+      <td>${d.commissionPct || 0}%</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Tasks
+function renderTasksTable() {
+  const tbody = document.querySelector('#tasks-table tbody');
+  tbody.innerHTML = '';
+  state.tasks.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${t.date}</td>
+      <td>${t.time}</td>
+      <td>${t.type}</td>
+      <td>${t.who}</td>
+      <td>${t.related}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Reports
+function renderReports() {
+  const funnelEl = document.getElementById('kpi-funnel');
+  const sourcesEl = document.getElementById('kpi-sources');
+  funnelEl.innerHTML = '';
+  sourcesEl.innerHTML = '';
+
+  const totalsByStatus = {};
+  LEAD_STATUSES.forEach(s => (totalsByStatus[s] = 0));
+  state.leads.forEach(l => {
+    totalsByStatus[l.status] = (totalsByStatus[l.status] || 0) + 1;
+  });
+
+  LEAD_STATUSES.forEach(status => {
+    const li = document.createElement('li');
+    li.className = 'kpi-item';
+    li.innerHTML = `
+      <span>${status}</span>
+      <span>${totalsByStatus[status] || 0}</span>
+    `;
+    funnelEl.appendChild(li);
+  });
+
+  const bySource = {};
+  state.leads.forEach(l => {
+    const s = l.source || 'Other';
+    bySource[s] = (bySource[s] || 0) + 1;
+  });
+
+  Object.entries(bySource).forEach(([src, count]) => {
+    const li = document.createElement('li');
+    li.className = 'kpi-item';
+    li.innerHTML = `
+      <span>${src}</span>
+      <span>${count}</span>
+    `;
+    sourcesEl.appendChild(li);
+  });
+}
+
+/* === FORMS === */
+
+// LEADS
+let editingLeadId = null;
+
+function openLeadForm() {
+  document.getElementById('lead-form-drawer').classList.add('open');
+}
+
+function closeLeadForm() {
+  document.getElementById('lead-form-drawer').classList.remove('open');
+  editingLeadId = null;
+  document.getElementById('lead-form-title').textContent = 'ახალი ლიდი';
+  document.getElementById('lead-form').reset();
+}
+
+function openLeadForEdit(id) {
+  const lead = state.leads.find(l => l.id === id);
+  if (!lead) return;
+  editingLeadId = id;
+  document.getElementById('lead-form-title').textContent =
+    'ლიდის რედაქტირება';
+
+  const form = document.getElementById('lead-form');
+  form.name.value = lead.name || '';
+  form.phone.value = lead.phone || '';
+  form.email.value = lead.email || '';
+  form.budget.value = lead.budget || '';
+  form.district.value = lead.district || '';
+  form.status.value = lead.status || 'New';
+  form.source.value = lead.source || 'Manual';
+  form.notes.value = lead.notes || '';
+
+  openLeadForm();
+}
+
+function setupLeadForm() {
+  document
+    .getElementById('btn-open-lead-form')
+    .addEventListener('click', openLeadForm);
+  document
+    .getElementById('close-lead-form')
+    .addEventListener('click', closeLeadForm);
+  document
+    .getElementById('reset-lead-form')
+    .addEventListener('click', () =>
+      document.getElementById('lead-form').reset()
+    );
+
+  document.getElementById('quick-add-lead').addEventListener('click', () => {
+    document
+      .querySelector('.nav-item[data-view="leads"]')
+      .click();
+    openLeadForm();
+  });
+
+  const form = document.getElementById('lead-form');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const budget = data.budget ? Number(data.budget) : null;
+
+    if (editingLeadId) {
+      const idx = state.leads.findIndex(l => l.id === editingLeadId);
+      if (idx !== -1) {
+        state.leads[idx] = {
+          ...state.leads[idx],
+          ...data,
+          budget,
+          updatedAt: nowISO()
+        };
+        addActivity(`განახლდა ლიდი: ${data.name || 'უსახელო'}`);
+      }
+    } else {
+      const lead = {
+        id: uuid(),
+        ...data,
+        budget,
+        createdAt: nowISO()
+      };
+      state.leads.push(lead);
+      addActivity(`დაემატა ახალი ლიდი: ${data.name || 'უსახელო ლიდი'}`);
+    }
+
+    persistState();
+    renderLeadsKanban();
+    renderMetrics();
+    renderPipelineMini();
+    renderReports();
+    closeLeadForm();
+  });
+}
+
+// PROPERTIES
+let editingPropertyId = null;
+
+function openPropertyForm() {
+  document.getElementById('property-form-drawer').classList.add('open');
+}
+
+function closePropertyForm() {
+  document.getElementById('property-form-drawer').classList.remove('open');
+  editingPropertyId = null;
+  document.getElementById('property-form-title').textContent =
+    'ახალი ობიექტი';
+  document.getElementById('property-form').reset();
+}
+
+function setupPropertyForm() {
+  document
+    .getElementById('btn-open-property-form')
+    .addEventListener('click', openPropertyForm);
+  document
+    .getElementById('close-property-form')
+    .addEventListener('click', closePropertyForm);
+  document
+    .getElementById('reset-property-form')
+    .addEventListener('click', () =>
+      document.getElementById('property-form').reset()
+    );
+
+  document
+    .getElementById('quick-add-property')
+    .addEventListener('click', () => {
+      document
+        .querySelector('.nav-item[data-view="properties"]')
+        .click();
+      openPropertyForm();
+    });
+
+  const form = document.getElementById('property-form');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.price = data.price ? Number(data.price) : null;
+
+    if (editingPropertyId) {
+      const idx = state.properties.findIndex(p => p.id === editingPropertyId);
+      if (idx !== -1) {
+        state.properties[idx] = { ...state.properties[idx], ...data };
+        addActivity(`განახლდა ობიექტი: ${data.code}`);
+      }
+    } else {
+      const prop = {
+        id: uuid(),
+        ...data
+      };
+      state.properties.push(prop);
+      addActivity(`დაემატა ახალი ობიექტი: ${data.code}`);
+    }
+
+    persistState();
+    renderPropertiesTable();
+    renderMetrics();
+    closePropertyForm();
+  });
+
+  // Filters
+  ['property-search', 'property-type-filter', 'property-status-filter'].forEach(
+    id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', renderPropertiesTable);
+    }
+  );
+}
+
+// CONTACTS
+let editingContactId = null;
+
+function openContactForm() {
+  document.getElementById('contact-form-drawer').classList.add('open');
+}
+
+function closeContactForm() {
+  document.getElementById('contact-form-drawer').classList.remove('open');
+  editingContactId = null;
+  document.getElementById('contact-form-title').textContent =
+    'ახალი კონტაქტი';
+  document.getElementById('contact-form').reset();
+}
+
+function setupContactForm() {
+  document
+    .getElementById('btn-open-contact-form')
+    .addEventListener('click', openContactForm);
+  document
+    .getElementById('close-contact-form')
+    .addEventListener('click', closeContactForm);
+  document
+    .getElementById('reset-contact-form')
+    .addEventListener('click', () =>
+      document.getElementById('contact-form').reset()
+    );
+
+  const form = document.getElementById('contact-form');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    if (editingContactId) {
+      const idx = state.contacts.findIndex(c => c.id === editingContactId);
+      if (idx !== -1) {
+        state.contacts[idx] = { ...state.contacts[idx], ...data };
+        addActivity(`განახლდა კონტაქტი: ${data.name}`);
+      }
+    } else {
+      const c = {
+        id: uuid(),
+        ...data
+      };
+      state.contacts.push(c);
+      addActivity(`დაემატა ახალი კონტაქტი: ${data.name}`);
+    }
+
+    persistState();
+    renderContactsTable();
+    closeContactForm();
+  });
+}
+
+/* === INIT === */
+document.addEventListener('DOMContentLoaded', () => {
+  initState();
+  setupNavigation();
+  setupLeadForm();
+  setupPropertyForm();
+  setupContactForm();
+
+  renderMetrics();
+  renderPipelineMini();
+  renderActivityFeed();
+  renderLeadsKanban();
+  renderPropertiesTable();
+  renderContactsTable();
+  renderDealsTable();
+  renderTasksTable();
+  renderReports();
 });
