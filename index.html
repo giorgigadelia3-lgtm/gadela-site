@@ -1,310 +1,864 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ka">
-<head>
-  <meta charset="utf-8">
-  <title>GADELA CRM — უძრავი ქონების სააგენტოებისთვის</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta
-    name="description"
-    content="GADELA — უძრავი ქონების CRM, შექმნილი სპეციალურად ქართულ სააგენტოებზე: ლიდები, ობიექტები, დილები, KPI-ები და სრულად ლოკალიზებული ინტერფეისი."
-  >
-  <meta property="og:title" content="GADELA CRM — უძრავი ქონების სააგენტოებისთვის">
-  <meta property="og:description" content="ერთიანი სივრცე: ლიდები → ობიექტები → დილები → შემოსავლები. ქართული CRM უძრავი ქონებისთვის.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="og.jpg">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GADELA – უძრავი ქონების CRM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="GADELA – უძრავი ქონების CRM, რომელიც აძლევს ქართულ სააგენტოებს სრულ კონტროლს: ლიდები, ობიექტები, Deals, KPI-ები და ავტომატიზაციები ერთ პლატფორმაზე."
+    />
+    <meta property="og:title" content="GADELA – უძრავი ქონების CRM" />
+    <meta
+      property="og:description"
+      content="მიმდინარეობების, Deals-ებისა და KPI-ების მართვა ქართულ რეალობაზე მორგებულ CRM პლატფორმაში."
+    />
+    <meta property="og:image" content="og.jpg" />
+    <meta property="og:type" content="website" />
 
-  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body class="page">
-  <!-- Topbar -->
-  <header class="topbar">
-    <div class="container row between center">
-      <a href="#home" class="brand row center gap">
-        <div class="logo-circle">
-          <img src="assets/logo.svg" alt="GADELA logo">
-        </div>
-        <div>
-          <p class="muted xs">უძრავი ქონების ქართული CRM</p>
-          <h1 class="brand-title">GADELA</h1>
-        </div>
-      </a>
-      <nav class="nav hide-sm">
-        <a href="#vision">ხედვა</a>
-        <a href="#modules">მოდულები</a>
-        <a href="#security">უსაფრთხოება</a>
-        <a href="#pricing">ფასები</a>
-        <a href="#blueprint">ბლუპრინტი</a>
-        <a href="app.html" class="btn dark">შესვლა CRM-ში</a>
-      </nav>
-    </div>
-  </header>
+    <!-- ფონტი -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <main id="home">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container grid2 gap-xl">
-        <div>
-          <span class="badge">V1 • ქართული უძრავი ქონების CRM</span>
-          <h2 class="display">
-            მინიმალისტური CRM,
-            <span class="muted-strong">მაქსიმალური კონტროლით</span>
-          </h2>
-          <p class="lead">
-            GADELA აბრუნებს ქაოსურ Excel-ებს და Messenger-ჩეთებს ერთ CRM-ში:
-            ლიდები, ობიექტები, ჩვენებები, დილები, საკომისიოები და KPI-ები — ყველა
-            ნაბიჯი ლოგით და SLA ტაიმერებით.
-          </p>
-          <div class="row gap mt-lg">
-            <a href="app.html" class="btn dark">დაიწყე დაშბორდი</a>
-            <a href="#vision" class="btn outline">როგორ მუშაობს?</a>
+    <!-- ლენდინგის საკუთარი სტილები (არანაირი styles.css / script.js აქ) -->
+    <style>
+      :root {
+        --bg: #050816;
+        --bg-soft: #070b1f;
+        --card: #0b1024;
+        --primary: #4ade80;
+        --primary-soft: rgba(74, 222, 128, 0.1);
+        --text-main: #f9fafb;
+        --text-soft: #9ca3af;
+        --border-subtle: rgba(148, 163, 184, 0.2);
+        --accent: #38bdf8;
+        --danger: #fb7185;
+        --radius-xl: 18px;
+        --radius-lg: 14px;
+        --radius-pill: 999px;
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.6);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* ---------- HEADER ---------- */
+
+      .page-shell {
+        max-width: 1160px;
+        margin: 0 auto;
+        padding: 24px 16px 64px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand img {
+        width: 40px;
+        height: 40px;
+      }
+
+      .brand-title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .brand-title span:first-child {
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        font-size: 18px;
+      }
+
+      .brand-title span:last-child {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--text-soft);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 13px;
+        color: var(--text-soft);
+      }
+
+      .nav-pill {
+        padding: 6px 13px;
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--border-subtle);
+        background: rgba(15, 23, 42, 0.8);
+      }
+
+      .nav-pill span {
+        color: var(--primary);
+        font-weight: 500;
+        margin-right: 6px;
+      }
+
+      .nav-link:hover {
+        color: #e5e7eb;
+      }
+
+      .nav-divider {
+        width: 1px;
+        height: 20px;
+        background: var(--border-subtle);
+      }
+
+      .nav-btn {
+        padding: 8px 16px;
+        border-radius: var(--radius-pill);
+        border: 1px solid transparent;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.18s ease-out;
+      }
+
+      .nav-btn.secondary {
+        background: transparent;
+        border-color: var(--border-subtle);
+        color: var(--text-soft);
+      }
+
+      .nav-btn.secondary:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .nav-btn.primary {
+        background: linear-gradient(120deg, #22c55e, #4ade80);
+        color: #022c22;
+        box-shadow: 0 12px 30px rgba(34, 197, 94, 0.35);
+      }
+
+      .nav-btn.primary:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+      }
+
+      /* ---------- HERO ---------- */
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 3fr) minmax(0, 3fr);
+        gap: 36px;
+        margin-bottom: 40px;
+      }
+
+      .hero-main-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 10px;
+        border-radius: var(--radius-pill);
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid var(--border-subtle);
+        font-size: 11px;
+        color: var(--text-soft);
+        margin-bottom: 18px;
+      }
+
+      .hero-main-eyebrow span {
+        background: var(--primary-soft);
+        color: var(--primary);
+        padding: 3px 8px;
+        border-radius: var(--radius-pill);
+        font-weight: 600;
+      }
+
+      .hero-title {
+        font-size: clamp(28px, 3.3vw, 34px);
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        margin-bottom: 12px;
+      }
+
+      .hero-title strong {
+        color: var(--primary);
+      }
+
+      .hero-subtitle {
+        font-size: 14px;
+        color: var(--text-soft);
+        max-width: 520px;
+        line-height: 1.5;
+        margin-bottom: 18px;
+      }
+
+      .hero-highlights {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 22px;
+      }
+
+      .chip {
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: var(--radius-pill);
+        padding: 6px 11px;
+        font-size: 11px;
+        color: var(--text-soft);
+        border: 1px dashed rgba(148, 163, 184, 0.35);
+      }
+
+      .chip span {
+        color: var(--accent);
+        margin-right: 4px;
+      }
+
+      .hero-cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+
+      .hero-cta-main {
+        padding: 11px 21px;
+        border-radius: var(--radius-pill);
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(120deg, #22c55e, #4ade80);
+        color: #022c22;
+        box-shadow: var(--shadow-soft);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .hero-cta-main span {
+        font-size: 16px;
+      }
+
+      .hero-cta-ghost {
+        font-size: 12px;
+        color: var(--text-soft);
+        padding: 8px 14px;
+        border-radius: var(--radius-pill);
+        border: 1px dashed rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.8);
+      }
+
+      .hero-meta {
+        font-size: 11px;
+        color: var(--text-soft);
+      }
+
+      .hero-meta strong {
+        color: var(--primary);
+      }
+
+      /* ---------- HERO RIGHT – DEMO CARD ---------- */
+
+      .hero-demo-card {
+        background: radial-gradient(circle at top left, #1d293b 0, #020617 50%);
+        border-radius: 26px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        padding: 18px 18px 20px;
+        box-shadow: var(--shadow-soft);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .hero-demo-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 4px;
+      }
+
+      .hero-demo-title {
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .hero-demo-sub {
+        font-size: 11px;
+        color: var(--text-soft);
+      }
+
+      .hero-demo-badge {
+        padding: 4px 9px;
+        border-radius: var(--radius-pill);
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        font-size: 10px;
+        color: var(--accent);
+      }
+
+      .hero-demo-main {
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        padding: 14px;
+      }
+
+      .hero-demo-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        margin-bottom: 9px;
+        color: var(--text-soft);
+      }
+
+      .hero-demo-row strong {
+        display: block;
+        color: var(--text-main);
+        font-size: 13px;
+        margin-bottom: 2px;
+      }
+
+      .hero-demo-pill {
+        padding: 4px 10px;
+        background: rgba(15, 23, 42, 0.95);
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        font-size: 10px;
+        color: var(--text-soft);
+      }
+
+      .hero-demo-pill span {
+        color: var(--primary);
+      }
+
+      .hero-demo-pipeline {
+        display: flex;
+        gap: 4px;
+        margin-top: 6px;
+      }
+
+      .hero-demo-stage {
+        flex: 1;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(30, 64, 175, 0.7);
+        overflow: hidden;
+      }
+
+      .hero-demo-stage.filled {
+        background: linear-gradient(90deg, #4ade80, #22c55e);
+      }
+
+      .hero-demo-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 10px;
+        color: var(--text-soft);
+        margin-top: 8px;
+      }
+
+      .hero-demo-footer span strong {
+        color: #e5e7eb;
+      }
+
+      .hero-demo-taglist {
+        display: flex;
+        gap: 6px;
+      }
+
+      .hero-demo-tag {
+        padding: 3px 7px;
+        border-radius: var(--radius-pill);
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px dashed rgba(148, 163, 184, 0.35);
+      }
+
+      /* ---------- FEATURE STRIP ---------- */
+
+      .feature-strip {
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-subtle);
+        padding: 12px 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        font-size: 12px;
+        margin-bottom: 30px;
+      }
+
+      .feature-strip-label {
+        padding: 4px 9px;
+        border-radius: var(--radius-pill);
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px dashed rgba(148, 163, 184, 0.45);
+        font-size: 11px;
+        color: var(--text-soft);
+      }
+
+      .feature-strip-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .feature-pill {
+        padding: 4px 10px;
+        border-radius: var(--radius-pill);
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .feature-pill span.icon {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        background: rgba(34, 197, 94, 0.15);
+        color: var(--primary);
+      }
+
+      /* ---------- LAYOUT BLOCKS ---------- */
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 3.5fr) minmax(0, 2.5fr);
+        gap: 22px;
+        margin-bottom: 34px;
+      }
+
+      .card {
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-subtle);
+        padding: 18px 18px 16px;
+      }
+
+      .card h2 {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+
+      .card p {
+        font-size: 13px;
+        color: var(--text-soft);
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+
+      .list-bullets {
+        list-style: none;
+        margin-top: 4px;
+      }
+
+      .list-bullets li {
+        font-size: 13px;
+        color: var(--text-soft);
+        margin-bottom: 6px;
+        display: flex;
+        gap: 7px;
+      }
+
+      .list-bullets li::before {
+        content: "•";
+        color: var(--primary);
+        margin-top: 1px;
+      }
+
+      .mini-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--text-soft);
+        margin-bottom: 6px;
+      }
+
+      .tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+      }
+
+      .tag-cloud span {
+        padding: 4px 9px;
+        border-radius: var(--radius-pill);
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px dashed rgba(148, 163, 184, 0.4);
+        color: var(--text-soft);
+      }
+
+      /* ---------- FOOTER / CTA ---------- */
+
+      .footer-cta {
+        margin-top: auto;
+        padding: 18px 0 6px;
+        font-size: 13px;
+        color: var(--text-soft);
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .footer-cta-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .footer-cta-top strong {
+        color: var(--text-main);
+      }
+
+      .footer-cta-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .footer-cta small {
+        font-size: 11px;
+      }
+
+      /* ---------- RESPONSIVE ---------- */
+
+      @media (max-width: 900px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .hero {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .hero-demo-card {
+          order: -1;
+        }
+
+        .split {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page-shell {
+          padding-inline: 14px;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .hero-cta-row {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .feature-strip {
+          align-items: flex-start;
+        }
+
+        .footer-cta-top {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page-shell">
+      <!-- HEADER -->
+      <header>
+        <div class="brand">
+          <img src="logo.svg" alt="GADELA logo" />
+          <div class="brand-title">
+            <span>GADELA</span>
+            <span>Real Estate CRM • საქართველო</span>
           </div>
-          <p class="xs muted mt">
-            Lightning-fast ძებნა • ქართული ლოკალიზაცია • Multi-tenant არქიტექტურა
-          </p>
         </div>
-        <div>
-          <div class="card hero-media">
-            <div class="media-screen">
-              <div class="pill-row">
-                <span class="pill">Leads</span>
-                <span class="pill">Properties</span>
-                <span class="pill">Deals</span>
-                <span class="pill">KPI</span>
-              </div>
-              <div class="bars">
-                <div class="bar bar-1"></div>
-                <div class="bar bar-2"></div>
-                <div class="bar bar-3"></div>
-              </div>
-              <p class="xs muted mt-sm">
-                Demo მონაცემებია. ნამდვილი დილები ნახავ app.html-ში.
-              </p>
+
+        <nav class="nav-links">
+          <div class="nav-pill">
+            <span>V1</span>
+            პირველი ქართული უძრავი ქონების CRM
+          </div>
+
+          <div class="nav-divider"></div>
+
+          <a href="#features" class="nav-link">ფუნქციები</a>
+          <a href="#modules" class="nav-link">მოდულები</a>
+          <a href="#pricing" class="nav-link">ფასები</a>
+
+          <button
+            class="nav-btn secondary"
+            onclick="window.location.href='app.html'"
+          >
+            შევიდე როგორც აგენტი
+          </button>
+          <button
+            class="nav-btn primary"
+            onclick="window.location.href='app.html'"
+          >
+            შესვლა CRM-ში
+          </button>
+        </nav>
+      </header>
+
+      <!-- HERO -->
+      <main>
+        <section class="hero">
+          <!-- LEFT -->
+          <div>
+            <div class="hero-main-eyebrow">
+              <span>ახალი თაობის პლატფორმა</span>
+              მინიმალური ქაოსი, მაქსიმალური კონტროლი
             </div>
-            <div class="row gap sm mt">
-              <div class="chip">⚡ Lightning Search</div>
-              <div class="chip">🔐 RBAC & AuditLog</div>
-              <div class="chip">📱 Mobile-first</div>
+
+            <h1 class="hero-title">
+              მინიმალისტური
+              <strong>უძრავი ქონების CRM</strong>,
+              მაქსიმალურად კონტროლით
+            </h1>
+
+            <p class="hero-subtitle">
+              GADELA აგენთებს უშლის Excel-ს და Messenger-ჩათებს ერთ CRM-ში:
+              ლიდები, ობიექტები, ჩვენებები, Deals, დოკუმენტები და KPI-ები —
+              ყველაფერი მკაფიო ლოგში და SLA ტაიმერებით.
+            </p>
+
+            <div class="hero-highlights">
+              <div class="chip"><span>●</span> Lightning-fast Search</div>
+              <div class="chip"><span>●</span> RBAC &amp; AuditLog</div>
+              <div class="chip"><span>●</span> Mobile-first აგენტები</div>
+            </div>
+
+            <div class="hero-cta-row">
+              <button
+                class="hero-cta-main"
+                onclick="window.location.href='app.html'"
+              >
+                <span>▶</span> შევიდე CRM-ში როგორც Demo
+              </button>
+
+              <div class="hero-cta-ghost">
+                ან <strong>გუნდისთვის ვიზუალური ტური</strong> მოამზადე CRM-ში
+                შესვლის შემდეგ.
+              </div>
+            </div>
+
+            <div class="hero-meta">
+              <strong>დირექტორებისთვის:</strong> სრული Audit Trail, SLA, KPI და
+              გუნდის კონტროლი ერთი დაფიდან.
             </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Vision -->
-    <section id="vision" class="section">
-      <div class="container">
-        <h3 class="h2">პროდუქტული ხედვა &amp; ღირებულება</h3>
-        <p class="muted">
-          მიზანია შეიქმნას უმაღლესი დონის, პრაქტიკული და ლამაზად დაპროექტებული CRM,
-          რომელიც რეალურად აჩქარებს ქართული უძრავი ქონების სააგენტოების მუშაობას,
-          ზრდის გამჭვირვალობას და აკონტროლებს პროცესებს.
-        </p>
-        <div class="grid3 gap mt-lg">
-          <div class="card">
-            <h4>ვისთვის?</h4>
-            <ul class="list">
-              <li>სააგენტოს დირექტორები &amp; თიმლიდერები</li>
-              <li>გაყიდვების აგენტები</li>
-              <li>მარკეტინგი / ლიდ-გენერაცია</li>
-              <li>ბექ-ოფისი, იურისტები, დეველოპერები</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h4>ძირითადი ღირებულება</h4>
-            <ul class="list">
-              <li>ერთიანი სამუშაო სივრცე</li>
-              <li>გამჭვირვალე KPI-ები და ლოგები</li>
-              <li>ავტომატიზაციები და SLA ტაიმერები</li>
-              <li>ქართული ლოკალიზაცია, ₾ ვალუტა</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h4>როლიების სისტემა (RBAC)</h4>
-            <ul class="list">
-              <li>Director / Owner</li>
-              <li>Team Lead &amp; Agent</li>
-              <li>Marketing &amp; Legal</li>
-              <li>Auditor (Read-only)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
+          <!-- RIGHT: DEMO CARD -->
+          <aside class="hero-demo-card">
+            <div class="hero-demo-header">
+              <div>
+                <div class="hero-demo-title">მოქმედი დღე – დეშბორდი</div>
+                <div class="hero-demo-sub">
+                  ერთი ეკრანიდან: ლიდები → ობიექტები → Deals → შემოსავლები.
+                </div>
+              </div>
+              <div class="hero-demo-badge">Director View</div>
+            </div>
 
-    <!-- Modules -->
-    <section id="modules" class="section alt">
-      <div class="container">
-        <h3 class="h2">ძირითადი მოდულები</h3>
-        <div class="grid3 gap mt-lg">
+            <div class="hero-demo-main">
+              <div class="hero-demo-row">
+                <div>
+                  <strong>ახალი ლიდები</strong>
+                  დღევანდელი დღე / SLA 15 წუთი
+                </div>
+                <div class="hero-demo-pill">
+                  SLA: <span> 92% დროზე</span>
+                </div>
+              </div>
+
+              <div class="hero-demo-pipeline">
+                <div class="hero-demo-stage filled"></div>
+                <div class="hero-demo-stage filled"></div>
+                <div class="hero-demo-stage filled"></div>
+                <div class="hero-demo-stage"></div>
+                <div class="hero-demo-stage"></div>
+                <div class="hero-demo-stage"></div>
+              </div>
+
+              <div class="hero-demo-footer">
+                <span>
+                  დღეს <strong>4 ახალი ლიდი</strong>,
+                  <strong>3 აქტიური ჩვენება</strong>
+                </span>
+                <div class="hero-demo-taglist">
+                  <div class="hero-demo-tag">Leads</div>
+                  <div class="hero-demo-tag">Properties</div>
+                  <div class="hero-demo-tag">Deals</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <!-- FEATURE STRIP -->
+        <section id="features" class="feature-strip">
+          <div class="feature-strip-label">რა მოგცემს GADELA?</div>
+          <div class="feature-strip-list">
+            <div class="feature-pill">
+              <span class="icon">✓</span> სრული
+              Pipeline – Leads → Deals → Payout
+            </div>
+            <div class="feature-pill">
+              <span class="icon">✓</span> ქართული
+              ფორმატები – ₾, DD.MM.YYYY, უბნები
+            </div>
+            <div class="feature-pill">
+              <span class="icon">✓</span> Omni-channel
+              ლიდები – ვებ-ფორმა, FB, WhatsApp, Telegram
+            </div>
+            <div class="feature-pill">
+              <span class="icon">✓</span> ძლიერი
+              AuditLog &amp; ანტი-თაღლითური მექანიზმები
+            </div>
+          </div>
+        </section>
+
+        <!-- MODULES / VALUE -->
+        <section id="modules" class="split">
           <div class="card">
-            <h4>Leads &amp; Contacts</h4>
-            <p class="muted">
-              ომნი-ჩანელი: ვებ-ფორმები, რეკლამებიდან ლიდები, WhatsApp / Telegram,
-              სატელეფონო ლოგები. დუბლიკატების პრევენცია და SLA ტაიმერები.
+            <div class="mini-title">პროცესები &amp; გუნდი</div>
+            <h2>პროცესული ფოკუსი, არა მხოლოდ „სხვა CRM“</h2>
+            <p>
+              GADELA აშენებულია ქართული სააგენტოების ყოველდღიურობაზე: დ звонок,
+              ჩვენება, ხელშეკრულება და საკომისიო. ყველაფერი ერთ სისტემაში, სადაც
+              ჩანაწერი არ იკარგება და არც ხმოვანი დაპირება „გავაკეთებ მერე“.
             </p>
-            <ul class="list xs">
-              <li>დუბლიკატების კონტროლი</li>
-              <li>მიზნობრივი რაუტინგი</li>
-              <li>Lead score &amp; SLA დედიაინები</li>
+            <ul class="list-bullets">
+              <li>Leads &amp; Contacts – დუბლიკატების პრევენციით.</li>
+              <li>Properties &amp; Listings – საცხოვრებელი და კომერციული.</li>
+              <li>Deals &amp; Commissions – მოქნილი საკომისიო ფორმულები.</li>
+              <li>Tasks &amp; Calendar – Google/Outlook სინქრონიზაცია.</li>
+              <li>Reporting &amp; KPI – დირექტორისთვის რეალური სურათი.</li>
             </ul>
           </div>
-          <div class="card">
-            <h4>Properties &amp; Inventory</h4>
-            <p class="muted">
-              ქირავნება / გაყიდვა, საცხოვრებელი / კომერციული —
-              სრული მონაცემები ობიექტზე და მედია მენეჯმენტი.
-            </p>
-            <ul class="list xs">
-              <li>უბანი / ზონა / სტატუსი</li>
-              <li>ფასის ისტორია</li>
-              <li>ფოტოები, წყლისნიშანი</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h4>Deals &amp; Commissions</h4>
-            <p class="muted">
-              Pipeline კანბანი, სტადიები, საკომისიო მოდელები და payouts. გუნდის
-              რანქინგები და ბონუსები.
-            </p>
-            <ul class="list xs">
-              <li>Won / Lost რეპორტები</li>
-              <li>სააგენტოს &amp; აგენტის საკომისიო</li>
-              <li>გეიმიფიკაცია (ქულები, ბორდები)</li>
-            </ul>
-          </div>
-        </div>
 
-        <div class="grid2 gap mt-lg">
-          <div class="card">
-            <h4>Communication Hub</h4>
-            <p class="muted">
-              WhatsApp, Telegram, SMS და Email ერთ ინბოქს-ში, კონტაქტის სრული
-              ისტორიით და call pop-up-ებით.
+          <aside class="card">
+            <div class="mini-title">როლები &amp; უფლებები (RBAC)</div>
+            <h2>დირექტორი, თიმლიდერი, აგენტი – ყველას თავისი ხედვა</h2>
+            <p>
+              თითოეული როლი ხედავს მხოლოდ იმ ინფორმაციას, რაც საჭიროა:
+              დირექტორს – სრული სურათი და Audit Trail, აგენტს – თავისი
+              პორტფელი და აქტივობები.
             </p>
-          </div>
-          <div class="card">
-            <h4>Reporting &amp; KPI</h4>
-            <p class="muted">
-              რეალურ დროში დეშბორდები: Conversion, Time-to-First-Contact, Avg Days
-              on Market, Source ROI და ა.შ.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Security & Anti-fraud -->
-    <section id="security" class="section">
-      <div class="container grid2 gap">
-        <div class="card">
-          <h3 class="h2">უსაფრთხოება &amp; ანტი-თაღლითობა</h3>
-          <ul class="list">
-            <li>Audit Trail ყველგან — ვინ / როდის / რა შეცვალა</li>
-            <li>Permission scopes &amp; RBAC</li>
-            <li>Device binding &amp; session control</li>
-            <li>Mass export მხოლოდ მაღალი როლებისთვის</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h4>კეთილსინდისიერების მექანიზმები</h4>
-          <ul class="list">
-            <li>Ghost-lead პროტექშენი</li>
-            <li>Geo/IP Check-ins ჩვენებებზე</li>
-            <li>Evidence locker ფოტო/ვიდეოთი</li>
-            <li>SLA enforcement &amp; ავტორაუტინგი</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+            <div class="tag-cloud" style="margin-top: 8px">
+              <span>Director / Owner</span>
+              <span>Team Lead</span>
+              <span>Agent</span>
+              <span>Marketing</span>
+              <span>Legal / Back-office</span>
+              <span>Auditor (Read-only)</span>
+            </div>
+          </aside>
+        </section>
 
-    <!-- Pricing -->
-    <section id="pricing" class="section alt">
-      <div class="container">
-        <h3 class="h2">ფასები — B2B SaaS მოდელი</h3>
-        <div class="grid3 gap mt-lg">
-          <div class="card">
-            <h4>Starter</h4>
-            <div class="price">₾0</div>
-            <p class="muted xs">პილოტი მცირე გუნდებისთვის</p>
-            <ul class="list xs">
-              <li>5 მომხმარებელი</li>
-              <li>Leads, Properties, Deals</li>
-              <li>ძირითადი რეპორტები</li>
-            </ul>
-          </div>
-          <div class="card highlight">
-            <h4>Pro</h4>
-            <div class="price">₾???/თვე</div>
-            <p class="muted xs">ზრდადი სააგენტოებისთვის</p>
-            <ul class="list xs">
-              <li>CTI / Inbox ინტეგრაციები</li>
-              <li>Matching Engine</li>
-              <li>20 მომხმარებელი</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h4>Enterprise</h4>
-            <div class="price">Custom</div>
-            <p class="muted xs">დიდი ქსელებისთვის</p>
-            <ul class="list xs">
-              <li>Single-tenant არჩევანი</li>
-              <li>დამატებითი უსაფრთხოება</li>
-              <li>Dedicated SLA</li>
-            </ul>
-          </div>
-        </div>
-        <p class="center xs muted mt">
-          Add-ons: WhatsApp/Telephony, პორტალებთან სინქი, e-Sign კრედიტები და სხვ.
-        </p>
-      </div>
-    </section>
-
-    <!-- Blueprint (short) -->
-    <section id="blueprint" class="section">
-      <div class="container">
-        <h3 class="h2">არქიტექტურული ბლუპრინტი (შემოკლებული)</h3>
-        <div class="grid2 gap mt-lg">
-          <div class="card">
-            <h4>ტექნიკური სტეკი</h4>
-            <ul class="list xs">
-              <li>Backend: Node.js / NestJS ან Python / FastAPI</li>
-              <li>DB: PostgreSQL + Elastic/OpenSearch + Redis</li>
-              <li>Frontend: React + Next.js (V2), ახლა — Vanilla Demo</li>
-              <li>Realtime: WebSocket/SSE, Audit &amp; Business Events</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h4>MVP საზღვრები</h4>
-            <ul class="list xs">
-              <li>Auth / RBAC / Accounts</li>
-              <li>Leads, Contacts, Properties, Deals</li>
-              <li>Tasks &amp; Calendar Sync</li>
-              <li>AuditLog ყველა კრიტიკულ ქმედებაზე</li>
-            </ul>
-          </div>
-        </div>
-        <div class="card mt-lg">
-          <p class="muted xs">
-            სრული ტექსტური ბლუპრინტი შენთან გვაქვს როგორც სამუშაო დოკუმენტი —
-            ინტერფეისისა და Back-end არქიტექტურისთვის. ამ ვერსიაში ნახავ მხოლოდ
-            მაღალი დონის შეჯამებას და demo CRM-ს.
+        <!-- PRICING / CTA SUMMARY -->
+        <section id="pricing" class="card">
+          <div class="mini-title">ფასები &amp; გეგმები</div>
+          <h2>მარტივი SaaS მოდელი – სააგენტოს ზომის მიხედვით</h2>
+          <p>
+            დეტალური ფასები და პაკეტები იხილება სისტემაში შესვლის შემდეგ.
+            კონცეფცია მარტივია: პატარა გუნდებისთვის სტარტერი, ზრდადი სააგენტოებისთვის
+            Pro, ხოლო მსხვილი ქსელებისთვის Enterprise, ცალკე SLA-ით და Single-tenant
+            არქიტექტურით.
           </p>
-          <a href="app.html" class="btn dark mt-lg">გადადი CRM Demo-ზე</a>
+
+          <ul class="list-bullets">
+            <li>Starter – საბაზისო მოდულები + 5 მომხმარებელი.</li>
+            <li>Pro – Inbox / CTI, ავტომატიზაციები, Matching Engine.</li>
+            <li>Enterprise – დამატებითი უსაფრთხოება და საკუთარი ინფრასტრუქტურა.</li>
+          </ul>
+        </section>
+      </main>
+
+      <!-- FOOTER CTA -->
+      <footer class="footer-cta">
+        <div class="footer-cta-top">
+          <div>
+            <strong>готовი ხარ ცდების რეჟიმიდან სისტემურ მუშაობაზე გადასასვლელად?</strong>
+            <br />
+            <small>
+              დაიწყე Demo პროფილიდან, დააყენე გუნდის როლები, შემდეგ კი გადააკეთე
+              შენი სააგენტოს რეალურ ინფრასტრუქტურად.
+            </small>
+          </div>
+
+          <div class="footer-cta-actions">
+            <button
+              class="nav-btn primary"
+              onclick="window.location.href='app.html'"
+            >
+              შესვლა CRM-ში
+            </button>
+            <button
+              class="nav-btn secondary"
+              onclick="window.location.href='app.html'"
+            >
+              ნახე Demo დეშბორდი
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container row between center">
-      <span class="xs muted">© <span id="year"></span> GADELA — უძრავი ქონების CRM</span>
-      <div class="row gap xs muted">
-        <span>ქართული / English (V2)</span>
-      </div>
+        <small>© GADELA Real Estate CRM — სპეციალურად ქართული ბაზრისთვის.</small>
+      </footer>
     </div>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
+  </body>
 </html>
