@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GADELA CRM — Demo</title>
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container navwrap">
+      <a class="brand" href="index.html">
+        <img src="assets/logo.svg" alt="GADELA" width="24" height="24">
+        <span>GADELA CRM</span>
+      </a>
+      <nav class="nav">
+        <a href="#" id="roleBadge" class="chip">როლი: გెస్ట్</a>
+        <a href="#" id="logoutBtn" class="btn ghost sm">გამოსვლა</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- LOGIN -->
+    <section id="authSection" class="section">
+      <div class="formwrap max400">
+        <h2>შესვლა</h2>
+        <p class="sub">აირჩიე როლი დემოსთვის (რეალურ ვერსიაში იქნება Auth, RBAC, JWT).</p>
+        <div class="grid2">
+          <select id="roleSelect">
+            <option value="DIRECTOR">Director</option>
+            <option value="LEAD">Team Lead</option>
+            <option value="AGENT">Agent</option>
+          </select>
+          <button id="loginBtn" class="btn primary">შესვლა</button>
+        </div>
+        <p class="xs muted mt">Demo განხილვებისთვის — მონაცემები ინახება ბრაუზერში (localStorage).</p>
+      </div>
+    </section>
+
+    <!-- APP -->
+    <section id="appSection" class="section" style="display:none">
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" data-tab="leads">Leads</button>
+        <button class="tab" data-tab="properties">Properties</button>
+        <button class="tab" data-tab="deals">Deals</button>
+        <button class="tab" data-tab="audit">Audit</button>
+      </div>
+
+      <!-- SEARCH / KPIs -->
+      <div class="kpi row between center">
+        <div class="row gap">
+          <input id="searchInput" class="input" placeholder="ძებნა სახელით/ტელეფონით/მისამართით">
+          <select id="filterSelect">
+            <option value="">ყველა სტატუსი</option>
+            <option>NEW</option><option>CONTACTED</option><option>QUALIFIED</option>
+            <option>SHOWING</option><option>OFFER</option><option>WON</option><option>LOST</option>
+            <option>SLA_BREACH</option>
+          </select>
+          <button id="clearFilter" class="btn ghost">გასუფთავება</button>
+        </div>
+        <div class="row gap">
+          <div class="kpi-tile"><b id="kpiLeads">0</b><span>Leads</span></div>
+          <div class="kpi-tile"><b id="kpiSLA">0</b><span>SLA ბრიჩები</span></div>
+          <div class="kpi-tile"><b id="kpiDeals">0</b><span>Deals</span></div>
+        </div>
+      </div>
+
+      <!-- PANELS -->
+      <div id="panelLeads">
+        <div class="card">
+          <h3>Add Lead</h3>
+          <div class="grid2">
+            <input id="leadName" placeholder="კონტაქტის სახელი *">
+            <input id="leadPhone" placeholder="ტელეფონი">
+          </div>
+          <div class="grid2">
+            <input id="leadEmail" placeholder="ელფოსტა">
+            <input id="leadSource" placeholder="წყარო (FB/Google/Web)">
+          </div>
+          <button id="addLeadBtn" class="btn primary mt">დამატება</button>
+          <p class="xs muted mt">SLA: 15 წუთში კონტაქტი. დუბლიკატი: ტელეფონი/ელფოსტა.</p>
+        </div>
+
+        <div id="leadsList" class="grid mt"></div>
+      </div>
+
+      <div id="panelProperties" style="display:none">
+        <div class="card">
+          <h3>Add Property</h3>
+          <div class="grid2">
+            <input id="propAddress" placeholder="მისამართი *">
+            <input id="propDistrict" placeholder="უბანი (მაგ. ვაკე)">
+          </div>
+          <div class="grid2">
+            <input id="propRooms" type="number" placeholder="ოთახები">
+            <input id="propFloor" type="number" placeholder="სართული">
+          </div>
+          <button id="addPropBtn" class="btn primary mt">დამატება</button>
+        </div>
+
+        <div id="propsList" class="grid mt"></div>
+      </div>
+
+      <div id="panelDeals" style="display:none">
+        <div class="card">
+          <h3>Deals</h3>
+          <p class="sub">შემდეგ ეტაპზე — Kanban. ახლა: მარტივი სია + სტატუსის შეცვლა.</p>
+          <div id="dealsList" class="grid mt"></div>
+        </div>
+      </div>
+
+      <div id="panelAudit" style="display:none">
+        <div class="card">
+          <h3>Audit Trail</h3>
+          <div id="auditList" class="audit"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
