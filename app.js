@@ -1,326 +1,601 @@
-/* GADELA CRM — Demo (Frontend-only)
-   მონაცემები ინახება localStorage-ში.
-   მოდულები: Auth (role mock), Leads, Properties, Deals, SLA indicator, Audit Trail, Filters.
-*/
-
-const LS_KEYS = {
-  ROLE: "gadela_role",
-  LEADS: "gadela_leads",
-  PROPS: "gadela_props",
-  DEALS: "gadela_deals",
-  AUDIT: "gadela_audit"
-};
+// Simple GADELA CRM front-end demo (no backend)
 
 const state = {
-  role: null,
   leads: [],
-  props: [],
+  properties: [],
   deals: [],
-  audit: []
+  tasks: [],
+  audit: [],
 };
 
-function loadState(){
-  state.role = localStorage.getItem(LS_KEYS.ROLE);
-  state.leads = JSON.parse(localStorage.getItem(LS_KEYS.LEADS) || "[]");
-  state.props = JSON.parse(localStorage.getItem(LS_KEYS.PROPS) || "[]");
-  state.deals = JSON.parse(localStorage.getItem(LS_KEYS.DEALS) || "[]");
-  state.audit = JSON.parse(localStorage.getItem(LS_KEYS.AUDIT) || "[]");
+const LS_KEY = "gadela-demo-state-v1";
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      Object.assign(state, parsed);
+      return;
+    }
+  } catch (e) {
+    console.warn("Failed to parse saved state", e);
+  }
+  seedDemoData();
+  saveState();
 }
-function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-function logAudit(action, payload){
-  const item = { ts: new Date().toISOString(), actor: state.role || "GUEST", action, payload };
-  state.audit.unshift(item);
-  save(LS_KEYS.AUDIT, state.audit);
-  renderAudit();
-}
 
-/* ---------- Auth ---------- */
-const authSection = document.getElementById("authSection");
-const appSection  = document.getElementById("appSection");
-const roleBadge   = document.getElementById("roleBadge");
-const logoutBtn   = document.getElementById("logoutBtn");
-const roleSelect  = document.getElementById("roleSelect");
-const loginBtn    = document.getElementById("loginBtn");
-
-loginBtn.onclick = () => {
-  const role = roleSelect.value || "AGENT";
-  localStorage.setItem(LS_KEYS.ROLE, role);
-  loadState();
-  mountUI();
-  logAudit("LOGIN", { role });
-};
-logoutBtn.onclick = () => {
-  localStorage.removeItem(LS_KEYS.ROLE);
-  loadState();
-  mountUI();
-  logAudit("LOGOUT", {});
-};
-
-function mountUI(){
-  if(state.role){
-    authSection.style.display="none";
-    appSection.style.display="block";
-    roleBadge.textContent = "როლი: " + state.role;
-  }else{
-    authSection.style.display="block";
-    appSection.style.display="none";
-    roleBadge.textContent = "როლი: გესტ";
+function saveState() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.warn("Failed to save state", e);
   }
 }
 
-/* ---------- Tabs ---------- */
-const tabs = document.querySelectorAll(".tab");
-const panelLeads = document.getElementById("panelLeads");
-const panelProps = document.getElementById("panelProperties");
-const panelDeals = document.getElementById("panelDeals");
-const panelAudit = document.getElementById("panelAudit");
-tabs.forEach(t => t.onclick = () => {
-  tabs.forEach(x => x.classList.remove("active"));
-  t.classList.add("active");
-  const tab = t.dataset.tab;
-  panelLeads.style.display   = tab==="leads"      ? "block":"none";
-  panelProps.style.display   = tab==="properties" ? "block":"none";
-  panelDeals.style.display   = tab==="deals"      ? "block":"none";
-  panelAudit.style.display   = tab==="audit"      ? "block":"none";
-});
+function seedDemoData() {
+  state.leads = [
+    {
+      id: "L-1001",
+      name: "ნიკა გიორგაძე",
+      phone: "+995 599 123456",
+      source: "Facebook Ads",
+      status: "New",
+      score: 80,
+      budget: 250000,
+      district: "ვაკე",
+      slaMinutes: 15,
+      slaRemaining: -5,
+    },
+    {
+      id: "L-1002",
+      name: "თამარ ჩხეიძე",
+      phone: "+995 555 777222",
+      source: "Referral",
+      status: "Contacted",
+      score: 65,
+      budget: 150000,
+      district: "საბურთალო",
+      slaMinutes: 30,
+      slaRemaining: 12,
+    },
+    {
+      id: "L-1003",
+      name: "Giga LLC",
+      phone: "+995 593 000333",
+      source: "MyHome",
+      status: "Qualified",
+      score: 92,
+      budget: 600000,
+      district: "დიღომი",
+      slaMinutes: 60,
+      slaRemaining: 40,
+    },
+  ];
 
-/* ---------- Search & KPI ---------- */
-const searchInput = document.getElementById("searchInput");
-const filterSelect = document.getElementById("filterSelect");
-const clearFilter = document.getElementById("clearFilter");
-const kpiLeads = document.getElementById("kpiLeads");
-const kpiSLA = document.getElementById("kpiSLA");
-const kpiDeals = document.getElementById("kpiDeals");
+  state.properties = [
+    {
+      id: "P-2001",
+      title: "ახალი კორპუსი • 3 ოთახი",
+      district: "ვაკე",
+      type: "SALE",
+      price: 240000,
+      area: 86,
+      status: "Active",
+    },
+    {
+      id: "P-2002",
+      title: "ბინა გაქირავებაზე • 2 ოთახი",
+      district: "საბურთალო",
+      type: "RENT",
+      price: 900,
+      area: 60,
+      status: "Showing",
+    },
+    {
+      id: "P-2003",
+      title: "კომერციული ფართი",
+      district: "ვერა",
+      type: "RENT",
+      price: 2800,
+      area: 120,
+      status: "Reserved",
+    },
+  ];
 
-searchInput.oninput = renderLeads;
-filterSelect.onchange = renderLeads;
-clearFilter.onclick = () => { searchInput.value=""; filterSelect.value=""; renderLeads(); };
+  state.deals = [
+    {
+      id: "D-3001",
+      leadId: "L-1001",
+      propertyId: "P-2001",
+      stage: "Offer",
+      value: 240000,
+      agent: "თეო ქავთარაძე",
+      closeProb: 70,
+    },
+    {
+      id: "D-3002",
+      leadId: "L-1002",
+      propertyId: "P-2002",
+      stage: "Showing",
+      value: 900 * 12,
+      agent: "გიორგი გაბელია",
+      closeProb: 40,
+    },
+    {
+      id: "D-3003",
+      leadId: "L-1003",
+      propertyId: "P-2003",
+      stage: "Won",
+      value: 2800 * 12,
+      agent: "სოფო დევდარიანი",
+      closeProb: 100,
+    },
+  ];
 
-/* ---------- Leads CRUD ---------- */
-const leadName  = document.getElementById("leadName");
-const leadPhone = document.getElementById("leadPhone");
-const leadEmail = document.getElementById("leadEmail");
-const leadSource= document.getElementById("leadSource");
-const addLeadBtn= document.getElementById("addLeadBtn");
-const leadsList = document.getElementById("leadsList");
+  state.tasks = [
+    {
+      id: "T-4001",
+      title: "დაუდასტურე ჩვენება თამართან",
+      due: "დღეს 18:30",
+      type: "Call",
+      owner: "გიორგი",
+      status: "Open",
+    },
+    {
+      id: "T-4002",
+      title: "კონტრაქტის გადაგზავნა Giga LLC-სთვის",
+      due: "ხვალ",
+      type: "Email",
+      owner: "თეო",
+      status: "In progress",
+    },
+  ];
 
-addLeadBtn.onclick = () => {
-  const name = leadName.value.trim();
-  if(!name){ alert("სახელი აუცილებელია"); return; }
-  const phone = leadPhone.value.trim() || null;
-  const email = leadEmail.value.trim() || null;
-
-  // Duplicate guard by phone/email
-  if(phone && state.leads.some(l => l.phone === phone)){ alert("დუბლიკატი (ტელეფონი)"); return; }
-  if(email && state.leads.some(l => l.email === email)){ alert("დუბლიკატი (ელფოსტა)"); return; }
-
-  const lead = {
-    id: crypto.randomUUID(),
-    contact_name: name,
-    phone, email,
-    source: leadSource.value.trim() || null,
-    status: "NEW",
-    created_at: Date.now(),
-    // SLA due 15 minutes
-    sla_due_at: Date.now() + 15*60*1000,
-    owner: state.role || "AGENT"
-  };
-  state.leads.unshift(lead);
-  save(LS_KEYS.LEADS, state.leads);
-  logAudit("LEAD_CREATE", {id: lead.id, name});
-  leadName.value = ""; leadPhone.value=""; leadEmail.value=""; leadSource.value="";
-  renderLeads();
-  renderKPI();
-};
-
-function changeLeadStatus(id, status){
-  const l = state.leads.find(x => x.id===id); if(!l) return;
-  l.status = status;
-  save(LS_KEYS.LEADS, state.leads);
-  logAudit("LEAD_STATUS", {id, status});
-  renderLeads(); renderKPI();
+  state.audit = [
+    {
+      id: "A-1",
+      actor: "გიორგი (Director)",
+      entity: "Deal D-3003",
+      action: "stage_changed Offer → Won",
+      time: "დღეს • 11:22",
+    },
+    {
+      id: "A-2",
+      actor: "თეო (Agent)",
+      entity: "Lead L-1001",
+      action: "status_changed New → Contacted",
+      time: "გუშინ • 16:05",
+    },
+  ];
 }
 
-function renderLeads(){
-  const term = (searchInput.value || "").toLowerCase();
-  const filter = filterSelect.value;
-  const now = Date.now();
-  leadsList.innerHTML = "";
-  state.leads
-    .filter(l => {
-      const inTerm = [l.contact_name, l.phone, l.email].filter(Boolean).some(v => (v+"").toLowerCase().includes(term));
-      const inFilter = !filter || l.status === filter;
-      return inTerm && inFilter;
-    })
-    .forEach(l => {
-      const breach = l.status==="NEW" && l.sla_due_at && l.sla_due_at < now;
-      const card = document.createElement("div");
-      card.className = "card row between center";
-      card.innerHTML = `
-        <div>
-          <div class="row gap center">
-            <b>${escapeHtml(l.contact_name)}</b>
-            ${breach ? '<span class="badge-sla">SLA</span>' : ''}
-          </div>
-          <div class="xs muted">${l.phone || ""} ${l.email ? " · "+escapeHtml(l.email):""} ${l.source? " · "+escapeHtml(l.source):""}</div>
-          <div class="xs muted">სტატუსი: ${l.status}</div>
-        </div>
-        <div class="row gap">
-          ${["NEW","CONTACTED","QUALIFIED","SHOWING","OFFER","WON","LOST"].map(s => `
-            <button class="tab ${l.status===s?"active":""}" data-s="${s}">${s}</button>
-          `).join("")}
-        </div>
-      `;
-      card.querySelectorAll("button.tab").forEach(btn=>{
-        btn.onclick = ()=> changeLeadStatus(l.id, btn.dataset.s);
-      });
-      leadsList.appendChild(card);
-    });
+/* -------- Rendering -------- */
+
+function $(selector) {
+  return document.querySelector(selector);
 }
 
-/* ---------- Properties CRUD ---------- */
-const propAddress = document.getElementById("propAddress");
-const propDistrict= document.getElementById("propDistrict");
-const propRooms   = document.getElementById("propRooms");
-const propFloor   = document.getElementById("propFloor");
-const addPropBtn  = document.getElementById("addPropBtn");
-const propsList   = document.getElementById("propsList");
-
-addPropBtn.onclick = () => {
-  const address = propAddress.value.trim();
-  if(!address){ alert("მისამართი აუცილებელია"); return; }
-  const p = {
-    id: crypto.randomUUID(),
-    address,
-    district: propDistrict.value.trim() || null,
-    rooms: parseInt(propRooms.value || "0") || null,
-    floor: parseInt(propFloor.value || "0") || null,
-    status: "ACTIVE",
-    created_at: Date.now()
-  };
-  state.props.unshift(p);
-  save(LS_KEYS.PROPS, state.props);
-  logAudit("PROPERTY_CREATE", {id: p.id, address});
-  propAddress.value=""; propDistrict.value=""; propRooms.value=""; propFloor.value="";
-  renderProps();
-};
-
-function changePropStatus(id, status){
-  const p = state.props.find(x=>x.id===id); if(!p) return;
-  p.status = status;
-  save(LS_KEYS.PROPS, state.props);
-  logAudit("PROPERTY_STATUS", {id, status});
-  renderProps();
-}
-
-function renderProps(){
-  propsList.innerHTML = "";
-  const term = (searchInput.value || "").toLowerCase();
-  state.props
-    .filter(p => [p.address, p.district].filter(Boolean).some(v => (v+"").toLowerCase().includes(term)))
-    .forEach(p=>{
-      const el = document.createElement("div");
-      el.className = "card row between center";
-      el.innerHTML = `
-        <div>
-          <b>${escapeHtml(p.address)}</b>
-          <div class="xs muted">${p.district || ""} ${p.rooms? " · "+p.rooms+" ოთახი":""} ${p.floor? " · "+p.floor+" სართული":""}</div>
-          <div class="xs muted">სტატუსი: ${p.status}</div>
-        </div>
-        <div class="row gap">
-          ${["ACTIVE","SHOWING","RESERVED","UNDER_OFFER","CLOSED","ARCHIVED"].map(s => `
-            <button class="tab ${p.status===s?"active":""}" data-s="${s}">${s}</button>
-          `).join("")}
-        </div>
-      `;
-      el.querySelectorAll("button.tab").forEach(btn=>{
-        btn.onclick = ()=> changePropStatus(p.id, btn.dataset.s);
-      });
-      propsList.appendChild(el);
-    });
-}
-
-/* ---------- Deals (simple) ---------- */
-const dealsList = document.getElementById("dealsList");
-function ensureDealFromLead(lead){
-  // simplistic: create deal when status becomes OFFER/WON (once)
-  if(["OFFER","WON"].includes(lead.status) && !state.deals.some(d=>d.lead_id===lead.id)){
-    const d = {
-      id: crypto.randomUUID(),
-      lead_id: lead.id,
-      title: `Deal · ${lead.contact_name}`,
-      stage: lead.status==="WON" ? "CLOSED_WON" : "UNDER_OFFER",
-      created_at: Date.now()
-    };
-    state.deals.unshift(d);
-    save(LS_KEYS.DEALS, state.deals);
-    logAudit("DEAL_CREATE", {id: d.id, lead: lead.id});
-  }
-}
-function changeDealStage(id, stage){
-  const d = state.deals.find(x=>x.id===id); if(!d) return;
-  d.stage = stage;
-  save(LS_KEYS.DEALS, state.deals);
-  logAudit("DEAL_STAGE", {id, stage});
-  renderDeals(); renderKPI();
-}
-function renderDeals(){
-  dealsList.innerHTML = "";
-  state.deals.forEach(d=>{
-    const el = document.createElement("div");
-    el.className="card row between center";
-    el.innerHTML = `
-      <div>
-        <b>${escapeHtml(d.title)}</b>
-        <div class="xs muted">სტადია: ${d.stage}</div>
-      </div>
-      <div class="row gap">
-        ${["NEW","UNDER_OFFER","CLOSED_WON","CLOSED_LOST"].map(s=>`
-          <button class="tab ${d.stage===s?"active":""}" data-s="${s}">${s}</button>
-        `).join("")}
-      </div>
-    `;
-    el.querySelectorAll("button.tab").forEach(b=> b.onclick=()=>changeDealStage(d.id,b.dataset.s));
-    dealsList.appendChild(el);
+function setView(viewId) {
+  document.querySelectorAll(".view").forEach((v) => {
+    v.classList.toggle("active", v.id === `view-${viewId}`);
   });
+  document.querySelectorAll(".sidebar .nav-item").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.view === viewId);
+  });
+
+  switch (viewId) {
+    case "overview":
+      renderOverview();
+      break;
+    case "leads":
+      renderLeads();
+      break;
+    case "properties":
+      renderProperties();
+      break;
+    case "deals":
+      renderDeals();
+      break;
+    case "tasks":
+      renderTasks();
+      break;
+    case "reports":
+      renderReports();
+      break;
+    case "audit":
+      renderAudit();
+      break;
+  }
 }
 
-/* ---------- Audit ---------- */
-const auditList = document.getElementById("auditList");
-function renderAudit(){
-  auditList.innerHTML = state.audit.map(a => `
-    <div class="audit-item">
-      <b>${new Date(a.ts).toLocaleString()}</b> — <b>${a.actor}</b> — ${a.action}
-      <div class="xs muted">${escapeHtml(JSON.stringify(a.payload))}</div>
+function renderOverview() {
+  const totalLeads = state.leads.length;
+  const openDeals = state.deals.filter((d) => d.stage !== "Won" && d.stage !== "Lost");
+  const wonDeals = state.deals.filter((d) => d.stage === "Won");
+  const mrr = wonDeals.reduce((sum, d) => sum + d.value, 0) / 12;
+
+  const el = $("#view-overview");
+  el.innerHTML = `
+    <div class="app-grid3">
+      <div class="app-card">
+        <div class="metric-title">ღია ლიდები</div>
+        <div class="metric-value">${totalLeads}</div>
+        <div class="metric-sub">New / Contacted / Qualified</div>
+      </div>
+      <div class="app-card">
+        <div class="metric-title">აქტიური დილები</div>
+        <div class="metric-value">${openDeals.length}</div>
+        <div class="metric-sub">სტადიები: Showing → Offer → Negotiation</div>
+      </div>
+      <div class="app-card">
+        <div class="metric-title"> სავარაუდო MRR ₾</div>
+        <div class="metric-value">₾${mrr.toLocaleString("ka-GE", {
+          maximumFractionDigits: 0,
+        })}</div>
+        <div class="metric-sub">Won დილებიდან</div>
+      </div>
     </div>
-  `).join("");
+
+    <h2 class="mt-lg" style="font-size:14px;color:#9ca3af">Deals pipeline</h2>
+    <div class="kanban">
+      ${["New", "Showing", "Offer", "Won"].map(renderDealColumn).join("")}
+    </div>
+  `;
 }
 
-/* ---------- KPI ---------- */
-function renderKPI(){
-  const now = Date.now();
-  const sla = state.leads.filter(l => l.status==="NEW" && l.sla_due_at && l.sla_due_at<now).length;
-  kpiLeads.textContent = state.leads.length;
-  kpiSLA.textContent = sla;
-  kpiDeals.textContent = state.deals.length;
+function renderDealColumn(stage) {
+  const deals = state.deals.filter((d) =>
+    stage === "New" ? d.stage === "New" : d.stage === stage
+  );
+  return `
+    <div class="kanban-column">
+      <div class="kanban-title">
+        <span>${stage}</span>
+        <span class="kanban-count">${deals.length}</span>
+      </div>
+      ${deals
+        .map(
+          (d) => `
+        <div class="card-sm">
+          <div class="card-sm-title">${d.id}</div>
+          <div class="card-sm-meta">
+            ₾${d.value.toLocaleString("ka-GE")} • ${d.agent}<br>
+            Close prob: ${d.closeProb}%
+          </div>
+        </div>
+      `
+        )
+        .join("")}
+    </div>
+  `;
 }
 
-/* ---------- Helpers ---------- */
-function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function renderLeads() {
+  const el = $("#view-leads");
+  const rows = state.leads
+    .map((lead) => {
+      let badgeClass = "badge-open";
+      if (lead.status === "Contacted") badgeClass = "badge-warm";
+      if (lead.status === "Qualified") badgeClass = "badge-open";
+      if (lead.status === "Cold") badgeClass = "badge-cold";
+      const slaBadge =
+        lead.slaRemaining < 0
+          ? `<span class="badge-xs badge-sla">SLA −${Math.abs(
+              lead.slaRemaining
+            )} წთ</span>`
+          : `<span class="badge-xs badge-open">SLA +${lead.slaRemaining} წთ</span>`;
+      return `
+      <tr>
+        <td>${lead.id}</td>
+        <td>${lead.name}</td>
+        <td>${lead.phone}</td>
+        <td>${lead.district}</td>
+        <td>₾${lead.budget.toLocaleString("ka-GE")}</td>
+        <td><span class="badge-xs ${badgeClass}">${lead.status}</span></td>
+        <td>${lead.source}</td>
+        <td>${slaBadge}</td>
+      </tr>
+    `;
+    })
+    .join("");
 
-/* ---------- Boot ---------- */
-loadState();
-mountUI();
-renderLeads();
-renderProps();
-renderDeals();
-renderAudit();
-renderKPI();
+  el.innerHTML = `
+    <h2 style="font-size:15px;margin-bottom:4px;">Leads &amp; SLA</h2>
+    <p class="xs" style="color:#9ca3af">
+      ეს არის demo მონაცემები. Production ვერსიაში ლიდები შემოვა ვებ-ფორმიდან,
+      FB Lead Ads-იდან, WhatsApp-იდან და სხვა არხებიდან.
+    </p>
 
-/* Observe lead status to spawn deals */
-const origChange = changeLeadStatus;
-changeLeadStatus = (id, status) => {
-  origChange(id, status);
-  const l = state.leads.find(x=>x.id===id);
-  if(l) ensureDealFromLead(l);
-};
+    <div class="filters-row">
+      <select class="select" id="leadStatusFilter">
+        <option value="">სტატუსი — ყველა</option>
+        <option value="New">New</option>
+        <option value="Contacted">Contacted</option>
+        <option value="Qualified">Qualified</option>
+      </select>
+      <select class="select" id="leadDistrictFilter">
+        <option value="">უბანი — ყველა</option>
+        <option value="ვაკე">ვაკე</option>
+        <option value="საბურთალო">საბურთალო</option>
+        <option value="დიღომი">დიღომი</option>
+      </select>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="table" id="leadsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>კლიენტი</th>
+            <th>ტელეფონი</th>
+            <th>უბანი</th>
+            <th>ბიუჯეტი</th>
+            <th>სტატუსი</th>
+            <th>წყარო</th>
+            <th>SLA</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  $("#leadStatusFilter").addEventListener("change", filterLeads);
+  $("#leadDistrictFilter").addEventListener("change", filterLeads);
+}
+
+function filterLeads() {
+  const status = $("#leadStatusFilter").value;
+  const district = $("#leadDistrictFilter").value;
+
+  const tbody = $("#leadsTable tbody");
+  tbody.innerHTML = state.leads
+    .filter((l) => (status ? l.status === status : true))
+    .filter((l) => (district ? l.district === district : true))
+    .map((lead) => {
+      let badgeClass = "badge-open";
+      if (lead.status === "Contacted") badgeClass = "badge-warm";
+      if (lead.status === "Qualified") badgeClass = "badge-open";
+      if (lead.status === "Cold") badgeClass = "badge-cold";
+      const slaBadge =
+        lead.slaRemaining < 0
+          ? `<span class="badge-xs badge-sla">SLA −${Math.abs(
+              lead.slaRemaining
+            )} წთ</span>`
+          : `<span class="badge-xs badge-open">SLA +${lead.slaRemaining} წთ</span>`;
+
+      return `
+        <tr>
+          <td>${lead.id}</td>
+          <td>${lead.name}</td>
+          <td>${lead.phone}</td>
+          <td>${lead.district}</td>
+          <td>₾${lead.budget.toLocaleString("ka-GE")}</td>
+          <td><span class="badge-xs ${badgeClass}">${lead.status}</span></td>
+          <td>${lead.source}</td>
+          <td>${slaBadge}</td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+function renderProperties() {
+  const el = $("#view-properties");
+  const rows = state.properties
+    .map(
+      (p) => `
+    <tr>
+      <td>${p.id}</td>
+      <td>${p.title}</td>
+      <td>${p.district}</td>
+      <td>${p.type === "SALE" ? "გაყიდვა" : "ქირავნება"}</td>
+      <td>${p.area} მ²</td>
+      <td>₾${p.price.toLocaleString("ka-GE")}</td>
+      <td>${p.status}</td>
+    </tr>
+  `
+    )
+    .join("");
+
+  el.innerHTML = `
+    <h2 style="font-size:15px;margin-bottom:4px;">Properties Catalog</h2>
+    <p class="xs" style="color:#9ca3af">
+      V1 demo: ობიექტების სტრუქტურირებული სია. Production ვერსიაში იქნება
+      ფოტოების გალერეა, სტატუსები, მეპი და პორტალებთან სინქი.
+    </p>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ობიექტი</th>
+            <th>უბანი</th>
+            <th>ტიპი</th>
+            <th>ფართი</th>
+            <th>ფასი</th>
+            <th>სტატუსი</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderDeals() {
+  const el = $("#view-deals");
+  el.innerHTML = `
+    <h2 style="font-size:15px;margin-bottom:4px;">Deals Pipeline</h2>
+    <p class="xs" style="color:#9ca3af">
+      კანბანი სტადიებით: New → Showing → Offer → Won/Lost.
+    </p>
+    <div class="kanban">
+      ${["New", "Showing", "Offer", "Won"].map(renderDealColumn).join("")}
+    </div>
+  `;
+}
+
+function renderTasks() {
+  const el = $("#view-tasks");
+  const rows = state.tasks
+    .map(
+      (t) => `
+    <tr>
+      <td>${t.id}</td>
+      <td>${t.title}</td>
+      <td>${t.type}</td>
+      <td>${t.owner}</td>
+      <td>${t.due}</td>
+      <td>${t.status}</td>
+    </tr>
+  `
+    )
+    .join("");
+
+  el.innerHTML = `
+    <h2 style="font-size:15px;margin-bottom:4px;">Tasks &amp; Calendar</h2>
+    <p class="xs" style="color:#9ca3af">
+      GA4 / Outlook Calendar ინტეგრაცია იქნება შემდეგ ეტაპზე. ახლა ხედავ
+      demo task-ებს ტაბულარულ სახეში.
+    </p>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Task</th>
+            <th>ტიპი</th>
+            <th>პასუხისმგებელი</th>
+            <th>ვადა</th>
+            <th>სტატუსი</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderReports() {
+  const el = $("#view-reports");
+  const leadToDealRate =
+    state.leads.length ? ((state.deals.length / state.leads.length) * 100).toFixed(1) : 0;
+
+  el.innerHTML = `
+    <h2 style="font-size:15px;margin-bottom:4px;">Reporting &amp; KPI</h2>
+    <p class="xs" style="color:#9ca3af">
+      ეს არის მხოლოდ high-level demo. სრულ ვერსიაში იქნება ფილტრირებადი დეშბორდები,
+      ექსპორტი და source-ების ROI.
+    </p>
+    <div class="app-grid3 mt-lg">
+      <div class="app-card">
+        <div class="metric-title">Lead → Deal Conversion</div>
+        <div class="metric-value">${leadToDealRate}%</div>
+        <div class="metric-sub">ყველა ღია ლიდიდან</div>
+      </div>
+      <div class="app-card">
+        <div class="metric-title">Deals count</div>
+        <div class="metric-value">${state.deals.length}</div>
+        <div class="metric-sub">Pipeline stages + Won</div>
+      </div>
+      <div class="app-card">
+        <div class="metric-title">Properties in catalog</div>
+        <div class="metric-value">${state.properties.length}</div>
+        <div class="metric-sub">SALE + RENT</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderAudit() {
+  const el = $("#view-audit");
+  const items = state.audit
+    .map(
+      (a) => `
+    <div class="audit-item">
+      <strong>${a.actor}</strong> • <span style="color:#9ca3af">${a.time}</span><br>
+      <span style="color:#9ca3af">${a.entity}</span> — ${a.action}
+    </div>
+  `
+    )
+    .join("");
+
+  el.innerHTML = `
+    <h2 style="font-size:15px;margin-bottom:4px;">Audit Log</h2>
+    <p class="xs" style="color:#9ca3af">
+      Production ვერსიაში AuditLog შეინახება Postgres-ში, ამოიტვირთება მხოლოდ
+      Director/Auditor როლისთვის და ექნება გაფილტვრა entity-ებისა და თარიღის მიხედვით.
+    </p>
+    <div class="audit-list">
+      ${items}
+    </div>
+  `;
+}
+
+/* -------- Global search (Ctrl+K) -------- */
+
+function activateGlobalSearch() {
+  const input = document.getElementById("globalSearch");
+  if (!input) return;
+  input.focus();
+  input.select();
+}
+
+function handleGlobalSearch() {
+  const q = $("#globalSearch").value.toLowerCase();
+  if (!q) return;
+
+  const foundLead = state.leads.find(
+    (l) =>
+      l.id.toLowerCase().includes(q) ||
+      l.name.toLowerCase().includes(q) ||
+      l.phone.includes(q)
+  );
+  if (foundLead) {
+    setView("leads");
+    // პატარა highlight-ს უბრალოდ ვტოვებთ search-ზე
+    return;
+  }
+
+  const foundProp = state.properties.find(
+    (p) =>
+      p.id.toLowerCase().includes(q) ||
+      p.title.toLowerCase().includes(q) ||
+      p.district.toLowerCase().includes(q)
+  );
+  if (foundProp) {
+    setView("properties");
+    return;
+  }
+}
+
+/* -------- Init -------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadState();
+  setView("overview");
+
+  document.querySelectorAll(".sidebar .nav-item").forEach((btn) => {
+    btn.addEventListener("click", () => setView(btn.dataset.view));
+  });
+
+  const searchInput = $("#globalSearch");
+  if (searchInput) {
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        handleGlobalSearch();
+      }
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      activateGlobalSearch();
+    }
+  });
+});

@@ -2,173 +2,305 @@
 <html lang="ka">
 <head>
   <meta charset="utf-8">
+  <title>GADELA CRM — უძრავი ქონების სააგენტოებისთვის</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GADELA — უძრავი ქონების CRM (საქართველო)</title>
-  <meta name="description" content="უმაღლესი კლასის CRM ხედვა და მუშაობადი დემო ქართულ უძრავ ქონებაზე მორგებული.">
-  <meta property="og:title" content="GADELA — უძრავი ქონების CRM">
-  <meta property="og:description" content="რადიკალურად პრაქტიკული, ქართულ რეალობაზე მორგებული CRM პლატფორმა.">
+  <meta
+    name="description"
+    content="GADELA — უძრავი ქონების CRM, შექმნილი სპეციალურად ქართულ სააგენტოებზე: ლიდები, ობიექტები, დილები, KPI-ები და სრულად ლოკალიზებული ინტერფეისი."
+  >
+  <meta property="og:title" content="GADELA CRM — უძრავი ქონების სააგენტოებისთვის">
+  <meta property="og:description" content="ერთიანი სივრცე: ლიდები → ობიექტები → დილები → შემოსავლები. ქართული CRM უძრავი ქონებისთვის.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/og.jpg">
-  <link rel="icon" href="assets/logo.svg">
+  <meta property="og:image" content="og.jpg">
+
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <!-- TOP NAV -->
+<body class="page">
+  <!-- Topbar -->
   <header class="topbar">
-    <div class="container navwrap">
-      <a class="brand" href="#">
-        <img src="assets/logo.svg" alt="GADELA" width="28" height="28">
-        <span>GADELA</span>
+    <div class="container row between center">
+      <a href="#home" class="brand row center gap">
+        <div class="logo-circle">
+          <img src="assets/logo.svg" alt="GADELA logo">
+        </div>
+        <div>
+          <p class="muted xs">უძრავი ქონების ქართული CRM</p>
+          <h1 class="brand-title">GADELA</h1>
+        </div>
       </a>
-      <nav class="nav">
+      <nav class="nav hide-sm">
         <a href="#vision">ხედვა</a>
         <a href="#modules">მოდულები</a>
         <a href="#security">უსაფრთხოება</a>
-        <a href="app.html" class="btn primary sm">გახსენით CRM</a>
+        <a href="#pricing">ფასები</a>
+        <a href="#blueprint">ბლუპრინტი</a>
+        <a href="app.html" class="btn dark">შესვლა CRM-ში</a>
       </nav>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="container hero__grid">
-      <div class="hero__text">
-        <p class="badge">უძრავი ქონების CRM · საქართველო</p>
-        <h1>მინიმალისტური დიზაინი, <span class="muted-strong">მაქსიმალური კონტროლი</span></h1>
-        <p class="lead">GADELA — რადიკალურად პრაქტიკული CRM, ქართულ რეალობაზე მორგებული. სწრაფი ლიდები, გამჭვირვალე პროცესები, KPI და Audit ყველგან.</p>
-        <div class="cta">
-          <a href="app.html" class="btn primary">გახსენით CRM</a>
-          <a href="#vision" class="btn ghost">ნახე ხედვა</a>
+  <main id="home">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container grid2 gap-xl">
+        <div>
+          <span class="badge">V1 • ქართული უძრავი ქონების CRM</span>
+          <h2 class="display">
+            მინიმალისტური CRM,
+            <span class="muted-strong">მაქსიმალური კონტროლით</span>
+          </h2>
+          <p class="lead">
+            GADELA აბრუნებს ქაოსურ Excel-ებს და Messenger-ჩეთებს ერთ CRM-ში:
+            ლიდები, ობიექტები, ჩვენებები, დილები, საკომისიოები და KPI-ები — ყველა
+            ნაბიჯი ლოგით და SLA ტაიმერებით.
+          </p>
+          <div class="row gap mt-lg">
+            <a href="app.html" class="btn dark">დაიწყე დაშბორდი</a>
+            <a href="#vision" class="btn outline">როგორ მუშაობს?</a>
+          </div>
+          <p class="xs muted mt">
+            Lightning-fast ძებნა • ქართული ლოკალიზაცია • Multi-tenant არქიტექტურა
+          </p>
         </div>
-        <ul class="hero__ticks">
-          <li>⚡ Lightning Search</li>
-          <li>🔒 RBAC & Audit</li>
-          <li>📱 Mobile-first Agents</li>
-        </ul>
-      </div>
-      <div class="hero__media">
-        <div class="screen-card">
-          <div class="screen"></div>
-          <div class="chips">
-            <span class="chip">Leads SLA</span>
-            <span class="chip">Matching</span>
-            <span class="chip">Deals</span>
+        <div>
+          <div class="card hero-media">
+            <div class="media-screen">
+              <div class="pill-row">
+                <span class="pill">Leads</span>
+                <span class="pill">Properties</span>
+                <span class="pill">Deals</span>
+                <span class="pill">KPI</span>
+              </div>
+              <div class="bars">
+                <div class="bar bar-1"></div>
+                <div class="bar bar-2"></div>
+                <div class="bar bar-3"></div>
+              </div>
+              <p class="xs muted mt-sm">
+                Demo მონაცემებია. ნამდვილი დილები ნახავ app.html-ში.
+              </p>
+            </div>
+            <div class="row gap sm mt">
+              <div class="chip">⚡ Lightning Search</div>
+              <div class="chip">🔐 RBAC & AuditLog</div>
+              <div class="chip">📱 Mobile-first</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- VISION -->
-  <section id="vision" class="section">
-    <div class="container">
-      <h2>პროდუქტული ხედვა & ღირებულება</h2>
-      <p class="sub">კონცენტრაცია რეალურ შედეგებზე: ლიდები → ჩვენებები → შეთანხმება → შემოსავალი.</p>
-
-      <div class="cards three">
-        <article class="card">
-          <h3>ვინც იყენებს</h3>
-          <p>დირექტორი, თიმლიდერი, აგენტი, მარკეტინგი, იურისტი, დეველოპერი/პარტნიორი, აუდიტორი.</p>
-        </article>
-        <article class="card">
-          <h3>ძირითი ღირებულება</h3>
-          <p>ერთიანი სამუშაო სივრცე, გამჭვირვალე კონტროლი, ავტომატიზაცია, სრული ლოკალიზაცია.</p>
-        </article>
-        <article class="card">
-          <h3>ავტომატიზაცია</h3>
-          <p>Matching, დუბლიკატების პრევენცია, SLA ტაიმერები, Omni-channel intake.</p>
-        </article>
-      </div>
-
-      <div class="panel">
-        <h4>როლები და უფლებები (RBAC)</h4>
-        <ul class="list">
-          <li><b>Director</b> — სრული ხედვა, პოლიტიკები, KPI, Audit Trail.</li>
-          <li><b>Team Lead</b> — განაწილება, პუფერ-ლიდები, დამტკიცებები.</li>
-          <li><b>Agent</b> — პორტფელი, ჩვენებები, შეთავაზებები.</li>
-          <li><b>Marketing</b> — წყაროები, კამპანიები, დუბლიკატების შერწყმა.</li>
-          <li><b>Legal</b> — კონტრაქტები, დოკ-მენეჯმენტი, ვერსიები.</li>
-          <li><b>Auditor</b> — მხოლოდ ნახვა.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- MODULES -->
-  <section id="modules" class="section alt">
-    <div class="container">
-      <h2>ძირითადი მოდულები</h2>
-      <div class="twocol">
-        <div class="panel">
-          <h4>Leads & Contacts</h4>
-          <ul class="list">
-            <li>ვებ-ფორმა, FB/Google Lead-ები, WhatsApp/Telegram intake</li>
-            <li>დუბლიკატის პრევენცია: ტელეფონი/ელფოსტა/device</li>
-            <li>რაუტერი: round-robin / performance / time-window</li>
-            <li>SLA ტაიმერი, first-response ავტომატიკა</li>
-          </ul>
-        </div>
-        <div class="panel">
-          <h4>Properties/Inventory</h4>
-          <ul class="list">
-            <li>მისამართი, უბანი, სტატუსი, სართული, ოთახები, ავეჯი</li>
-            <li>მედია/წყლისნიშანი/ვერსიები</li>
-            <li>სტატუსები: Active→Showing→Reserved→Offer→Closed</li>
-          </ul>
+    <!-- Vision -->
+    <section id="vision" class="section">
+      <div class="container">
+        <h3 class="h2">პროდუქტული ხედვა &amp; ღირებულება</h3>
+        <p class="muted">
+          მიზანია შეიქმნას უმაღლესი დონის, პრაქტიკული და ლამაზად დაპროექტებული CRM,
+          რომელიც რეალურად აჩქარებს ქართული უძრავი ქონების სააგენტოების მუშაობას,
+          ზრდის გამჭვირვალობას და აკონტროლებს პროცესებს.
+        </p>
+        <div class="grid3 gap mt-lg">
+          <div class="card">
+            <h4>ვისთვის?</h4>
+            <ul class="list">
+              <li>სააგენტოს დირექტორები &amp; თიმლიდერები</li>
+              <li>გაყიდვების აგენტები</li>
+              <li>მარკეტინგი / ლიდ-გენერაცია</li>
+              <li>ბექ-ოფისი, იურისტები, დეველოპერები</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>ძირითადი ღირებულება</h4>
+            <ul class="list">
+              <li>ერთიანი სამუშაო სივრცე</li>
+              <li>გამჭვირვალე KPI-ები და ლოგები</li>
+              <li>ავტომატიზაციები და SLA ტაიმერები</li>
+              <li>ქართული ლოკალიზაცია, ₾ ვალუტა</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>როლიების სისტემა (RBAC)</h4>
+            <ul class="list">
+              <li>Director / Owner</li>
+              <li>Team Lead &amp; Agent</li>
+              <li>Marketing &amp; Legal</li>
+              <li>Auditor (Read-only)</li>
+            </ul>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="twocol">
-        <div class="panel">
-          <h4>Deals & Commissions</h4>
+    <!-- Modules -->
+    <section id="modules" class="section alt">
+      <div class="container">
+        <h3 class="h2">ძირითადი მოდულები</h3>
+        <div class="grid3 gap mt-lg">
+          <div class="card">
+            <h4>Leads &amp; Contacts</h4>
+            <p class="muted">
+              ომნი-ჩანელი: ვებ-ფორმები, რეკლამებიდან ლიდები, WhatsApp / Telegram,
+              სატელეფონო ლოგები. დუბლიკატების პრევენცია და SLA ტაიმერები.
+            </p>
+            <ul class="list xs">
+              <li>დუბლიკატების კონტროლი</li>
+              <li>მიზნობრივი რაუტინგი</li>
+              <li>Lead score &amp; SLA დედიაინები</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Properties &amp; Inventory</h4>
+            <p class="muted">
+              ქირავნება / გაყიდვა, საცხოვრებელი / კომერციული —
+              სრული მონაცემები ობიექტზე და მედია მენეჯმენტი.
+            </p>
+            <ul class="list xs">
+              <li>უბანი / ზონა / სტატუსი</li>
+              <li>ფასის ისტორია</li>
+              <li>ფოტოები, წყლისნიშანი</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Deals &amp; Commissions</h4>
+            <p class="muted">
+              Pipeline კანბანი, სტადიები, საკომისიო მოდელები და payouts. გუნდის
+              რანქინგები და ბონუსები.
+            </p>
+            <ul class="list xs">
+              <li>Won / Lost რეპორტები</li>
+              <li>სააგენტოს &amp; აგენტის საკომისიო</li>
+              <li>გეიმიფიკაცია (ქულები, ბორდები)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid2 gap mt-lg">
+          <div class="card">
+            <h4>Communication Hub</h4>
+            <p class="muted">
+              WhatsApp, Telegram, SMS და Email ერთ ინბოქს-ში, კონტაქტის სრული
+              ისტორიით და call pop-up-ებით.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Reporting &amp; KPI</h4>
+            <p class="muted">
+              რეალურ დროში დეშბორდები: Conversion, Time-to-First-Contact, Avg Days
+              on Market, Source ROI და ა.შ.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security & Anti-fraud -->
+    <section id="security" class="section">
+      <div class="container grid2 gap">
+        <div class="card">
+          <h3 class="h2">უსაფრთხოება &amp; ანტი-თაღლითობა</h3>
           <ul class="list">
-            <li>სტადიის ცვლილებები, საკომისიო მოდელები</li>
-            <li>Payouts/ბონუსები/გეიმიფიკაცია</li>
+            <li>Audit Trail ყველგან — ვინ / როდის / რა შეცვალა</li>
+            <li>Permission scopes &amp; RBAC</li>
+            <li>Device binding &amp; session control</li>
+            <li>Mass export მხოლოდ მაღალი როლებისთვის</li>
           </ul>
         </div>
-        <div class="panel">
-          <h4>Reporting & KPI</h4>
+        <div class="card">
+          <h4>კეთილსინდისიერების მექანიზმები</h4>
           <ul class="list">
-            <li>Conversion, Time-to-First-Contact, Velocity</li>
-            <li>Agent ranking, უბნების heatmap-ები</li>
+            <li>Ghost-lead პროტექშენი</li>
+            <li>Geo/IP Check-ins ჩვენებებზე</li>
+            <li>Evidence locker ფოტო/ვიდეოთი</li>
+            <li>SLA enforcement &amp; ავტორაუტინგი</li>
           </ul>
         </div>
       </div>
+    </section>
 
-      <div class="panel">
-        <h4>Anti-Fraud და Audit</h4>
-        <ul class="list">
-          <li>Audit Trail ყველგან</li>
-          <li>Ghost-lead პროტექშენი, SLA Enforcement</li>
-          <li>Permission Scopes, მასობრივი ექსპორტის კონტროლი</li>
-        </ul>
+    <!-- Pricing -->
+    <section id="pricing" class="section alt">
+      <div class="container">
+        <h3 class="h2">ფასები — B2B SaaS მოდელი</h3>
+        <div class="grid3 gap mt-lg">
+          <div class="card">
+            <h4>Starter</h4>
+            <div class="price">₾0</div>
+            <p class="muted xs">პილოტი მცირე გუნდებისთვის</p>
+            <ul class="list xs">
+              <li>5 მომხმარებელი</li>
+              <li>Leads, Properties, Deals</li>
+              <li>ძირითადი რეპორტები</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <h4>Pro</h4>
+            <div class="price">₾???/თვე</div>
+            <p class="muted xs">ზრდადი სააგენტოებისთვის</p>
+            <ul class="list xs">
+              <li>CTI / Inbox ინტეგრაციები</li>
+              <li>Matching Engine</li>
+              <li>20 მომხმარებელი</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Enterprise</h4>
+            <div class="price">Custom</div>
+            <p class="muted xs">დიდი ქსელებისთვის</p>
+            <ul class="list xs">
+              <li>Single-tenant არჩევანი</li>
+              <li>დამატებითი უსაფრთხოება</li>
+              <li>Dedicated SLA</li>
+            </ul>
+          </div>
+        </div>
+        <p class="center xs muted mt">
+          Add-ons: WhatsApp/Telephony, პორტალებთან სინქი, e-Sign კრედიტები და სხვ.
+        </p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SECURITY -->
-  <section id="security" class="section">
-    <div class="container">
-      <h2>უსაფრთხოება & არქიტექტურა</h2>
-      <div class="cards three">
-        <article class="card"><h3>RBAC</h3><p>როლებზე დაფუძნებული წვდომა და მინიმუმის პრინციპი.</p></article>
-        <article class="card"><h3>Audit</h3><p>ყველა კრიტიკული მოქმედება ილოგება.</p></article>
-        <article class="card"><h3>Scalability</h3><p>CQRS-lite, Async workers, DR სტრატეგიები.</p></article>
+    <!-- Blueprint (short) -->
+    <section id="blueprint" class="section">
+      <div class="container">
+        <h3 class="h2">არქიტექტურული ბლუპრინტი (შემოკლებული)</h3>
+        <div class="grid2 gap mt-lg">
+          <div class="card">
+            <h4>ტექნიკური სტეკი</h4>
+            <ul class="list xs">
+              <li>Backend: Node.js / NestJS ან Python / FastAPI</li>
+              <li>DB: PostgreSQL + Elastic/OpenSearch + Redis</li>
+              <li>Frontend: React + Next.js (V2), ახლა — Vanilla Demo</li>
+              <li>Realtime: WebSocket/SSE, Audit &amp; Business Events</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>MVP საზღვრები</h4>
+            <ul class="list xs">
+              <li>Auth / RBAC / Accounts</li>
+              <li>Leads, Contacts, Properties, Deals</li>
+              <li>Tasks &amp; Calendar Sync</li>
+              <li>AuditLog ყველა კრიტიკულ ქმედებაზე</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mt-lg">
+          <p class="muted xs">
+            სრული ტექსტური ბლუპრინტი შენთან გვაქვს როგორც სამუშაო დოკუმენტი —
+            ინტერფეისისა და Back-end არქიტექტურისთვის. ამ ვერსიაში ნახავ მხოლოდ
+            მაღალი დონის შეჯამებას და demo CRM-ს.
+          </p>
+          <a href="app.html" class="btn dark mt-lg">გადადი CRM Demo-ზე</a>
+        </div>
       </div>
-      <div class="cta mt">
-        <a href="app.html" class="btn primary">გახსენით CRM</a>
-        <a href="#vision" class="btn ghost">იხილე დეტალურად</a>
-      </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <footer class="footer">
     <div class="container row between center">
-      <div class="brand mini"><img src="assets/logo.svg" width="22" height="22" alt=""><span>GADELA</span></div>
-      <div class="row gap">
-        <a href="#vision">ხედვა</a>
-        <a href="#modules">მოდულები</a>
-        <a href="app.html">CRM</a>
+      <span class="xs muted">© <span id="year"></span> GADELA — უძრავი ქონების CRM</span>
+      <div class="row gap xs muted">
+        <span>ქართული / English (V2)</span>
       </div>
     </div>
   </footer>
