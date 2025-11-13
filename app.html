@@ -21,35 +21,35 @@
       </div>
 
       <nav class="sidebar-nav">
-        <a href="#" class="nav-item nav-item-active">
+        <a href="#" class="nav-item nav-item-active" data-section="dashboard">
           <span class="nav-dot"></span>
           <span>მთავარი დაფა</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-section="leads">
           <span class="nav-dot"></span>
           <span>ლიდები</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-section="properties">
           <span class="nav-dot"></span>
           <span>ობიექტები</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-section="clients">
           <span class="nav-dot"></span>
           <span>კლიენტები</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-section="deals">
           <span class="nav-dot"></span>
           <span>Deals &amp; მოლაპარაკებები</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-section="tasks">
           <span class="nav-dot"></span>
           <span>დავალებები / კალენდარი</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-section="reports">
           <span class="nav-dot"></span>
           <span>რეპორტები &amp; KPI</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-section="settings">
           <span class="nav-dot"></span>
           <span>პარამეტრები</span>
         </a>
@@ -68,147 +68,267 @@
 
     <!-- Main area -->
     <main class="app-main">
-      <!-- Top header -->
-      <header class="app-header">
-        <div>
-          <div class="app-breadcrumb">
-            ერთიანი სამუშაო პოლიგონები: ლიდები → ობიექტები → Deals → შემოსავლები
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboardSection" class="page-section page-section-active">
+        <!-- Top header -->
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">
+              ერთიანი სამუშაო პოლიგონები: ლიდები → ობიექტები → Deals → შემოსავლები
+            </div>
+            <h1 class="app-title">მთავარი CRM დაფა</h1>
           </div>
-          <h1 class="app-title">მთავარი CRM დაფა</h1>
-        </div>
 
-        <div class="app-header-actions">
-          <button class="btn btn-outline" id="quickCreateLeadBtn">+ ახალი ლიდი</button>
-          <button class="btn btn-primary" id="quickCreatePropertyBtn">
-            + ახალი ობიექტი
-          </button>
-        </div>
-      </header>
-
-      <!-- Filters row -->
-      <section class="dashboard-filters">
-        <div class="filter-group">
-          <label for="periodSelect">პერიოდი</label>
-          <select id="periodSelect">
-            <option value="today">დღეს</option>
-            <option value="7d">ბოლო 7 დღე</option>
-            <option value="30d" selected>ბოლო 30 დღე</option>
-            <option value="90d">ბოლო 90 დღე</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="teamSelect">გუნდი / მენეჯერი</label>
-          <select id="teamSelect">
-            <option value="all" selected>ყველა გუნდი</option>
-            <option value="teamA">Team A</option>
-            <option value="teamB">Team B</option>
-          </select>
-        </div>
-        <div class="filter-group filter-group-inline">
-          <label>SLA მონიტორინგი</label>
-          <div class="pill pill-ok" id="slaStatusPill">
-            SLA შესრულებულია
+          <div class="app-header-actions">
+            <button class="btn btn-outline" id="quickCreateLeadBtn">+ ახალი ლიდი</button>
+            <button class="btn btn-primary" id="quickCreatePropertyBtn">
+              + ახალი ობიექტი
+            </button>
           </div>
-        </div>
+        </header>
+
+        <!-- Filters row -->
+        <section class="dashboard-filters">
+          <div class="filter-group">
+            <label for="periodSelect">პერიოდი</label>
+            <select id="periodSelect">
+              <option value="today">დღეს</option>
+              <option value="7d">ბოლო 7 დღე</option>
+              <option value="30d" selected>ბოლო 30 დღე</option>
+              <option value="90d">ბოლო 90 დღე</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="teamSelect">გუნდი / მენეჯერი</label>
+            <select id="teamSelect">
+              <option value="all" selected>ყველა გუნდი</option>
+              <option value="teamA">Team A</option>
+              <option value="teamB">Team B</option>
+            </select>
+          </div>
+          <div class="filter-group filter-group-inline">
+            <label>SLA მონიტორინგი</label>
+            <div class="pill pill-ok" id="slaStatusPill">
+              SLA შესრულებულია
+            </div>
+          </div>
+        </section>
+
+        <!-- KPI cards -->
+        <section class="dashboard-kpis">
+          <article class="kpi-card">
+            <div class="kpi-label">მოქმედი ლიდები</div>
+            <div class="kpi-value" id="kpiOpenLeads">–</div>
+            <div class="kpi-sub">New / Contacted / Qualified</div>
+          </article>
+
+          <article class="kpi-card">
+            <div class="kpi-label">აქტიური ობიექტები</div>
+            <div class="kpi-value" id="kpiActiveProperties">–</div>
+            <div class="kpi-sub">იყიდება + ქირავდება</div>
+          </article>
+
+          <article class="kpi-card">
+            <div class="kpi-label">დღევანდელი ჩვენებები</div>
+            <div class="kpi-value" id="kpiTodayShowings">–</div>
+            <div class="kpi-sub">დაგეგმილი ვიზიტები</div>
+          </article>
+
+          <article class="kpi-card kpi-card-accent">
+            <div class="kpi-label">პოტენციური შემოსავალი</div>
+            <div class="kpi-value" id="kpiPipelineValue">₾ –</div>
+            <div class="kpi-sub">Open Deals in Pipeline</div>
+          </article>
+        </section>
+
+        <!-- Main content: 2 columns -->
+        <section class="dashboard-grid">
+          <!-- Left column -->
+          <div class="dashboard-col">
+            <!-- Pipeline overview -->
+            <article class="panel">
+              <header class="panel-header">
+                <div>
+                  <h2 class="panel-title">Pipeline Overview</h2>
+                  <p class="panel-sub">
+                    ეტაპები: ახალი → კონტაქტი → ქოლიფიცირებული → ჩვენება → შეთავაზება → დასრულებული.
+                  </p>
+                </div>
+                <span class="chip chip-muted">MVP</span>
+              </header>
+
+              <div class="pipeline-stages" id="pipelineStages">
+                <!-- JS აავსებს -->
+              </div>
+            </article>
+
+            <!-- Today showings & tasks -->
+            <article class="panel">
+              <header class="panel-header">
+                <h2 class="panel-title">დღევანდელი ჩვენებები &amp; დავალებები</h2>
+              </header>
+
+              <div class="split-two">
+                <div>
+                  <h3 class="panel-subtitle">ჩვენებები</h3>
+                  <ul class="list list-showings" id="todayShowingsList"></ul>
+                </div>
+                <div>
+                  <h3 class="panel-subtitle">დავალებები</h3>
+                  <ul class="list list-tasks" id="todayTasksList"></ul>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Right column -->
+          <div class="dashboard-col">
+            <!-- SLA risk -->
+            <article class="panel">
+              <header class="panel-header">
+                <h2 class="panel-title">SLA რისკის ქვეშ მყოფი ლიდები</h2>
+                <span class="chip chip-warning" id="slaRiskCountChip">0</span>
+              </header>
+              <ul class="list list-sla" id="slaRiskList"></ul>
+            </article>
+
+            <!-- Recent activity -->
+            <article class="panel">
+              <header class="panel-header">
+                <h2 class="panel-title">ბოლო აქტივობები</h2>
+                <button class="btn btn-ghost btn-xs" id="clearActivityBtn">
+                  გასუფთავება
+                </button>
+              </header>
+              <ul class="list list-activity" id="activityFeed"></ul>
+            </article>
+          </div>
+        </section>
       </section>
 
-      <!-- KPI cards -->
-      <section class="dashboard-kpis">
-        <article class="kpi-card">
-          <div class="kpi-label">მოქმედი ლიდები</div>
-          <div class="kpi-value" id="kpiOpenLeads">–</div>
-          <div class="kpi-sub">New / Contacted / Qualified</div>
-        </article>
+      <!-- LEADS SECTION -->
+      <section id="leadsSection" class="page-section">
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">GADELA · Leads Module</div>
+            <h1 class="app-title">ლიდების სია</h1>
+          </div>
+          <div class="app-header-actions">
+            <button class="btn btn-primary">+ ახალი ლიდი</button>
+          </div>
+        </header>
 
-        <article class="kpi-card">
-          <div class="kpi-label">აქტიური ობიექტები</div>
-          <div class="kpi-value" id="kpiActiveProperties">–</div>
-          <div class="kpi-sub">იყიდება + ქირავდება</div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-label">დღევანდელი ჩვენებები</div>
-          <div class="kpi-value" id="kpiTodayShowings">–</div>
-          <div class="kpi-sub">დაგეგმილი ვიზიტები</div>
-        </article>
-
-        <article class="kpi-card kpi-card-accent">
-          <div class="kpi-label">პოტენციური შემოსავალი</div>
-          <div class="kpi-value" id="kpiPipelineValue">₾ –</div>
-          <div class="kpi-sub">Open Deals in Pipeline</div>
-        </article>
+        <section class="panel">
+          <h2 class="panel-title">ლიდების მოდული დამუშავების პროცესშია</h2>
+          <p class="panel-sub">
+            ამ ეტაპზე სრულად მუშაობს მთავარი დაფა. Leads გვერდი მალე შეივსება ფილტრებით, ცხრილებით და დეტალური პროფილებით.
+          </p>
+        </section>
       </section>
 
-      <!-- Main content: 2 columns -->
-      <section class="dashboard-grid">
-        <!-- Left column -->
-        <div class="dashboard-col">
-          <!-- Pipeline overview -->
-          <article class="panel">
-            <header class="panel-header">
-              <div>
-                <h2 class="panel-title">Pipeline Overview</h2>
-                <p class="panel-sub">
-                  ეტაპები: ახალი → კონტაქტი → ქოლიფიცირებული → ჩვენება → შეთავაზება → დასრულებული.
-                </p>
-              </div>
-              <span class="chip chip-muted">MVP</span>
-            </header>
+      <!-- PROPERTIES SECTION -->
+      <section id="propertiesSection" class="page-section">
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">GADELA · Properties</div>
+            <h1 class="app-title">ობიექტების კატალოგი</h1>
+          </div>
+          <div class="app-header-actions">
+            <button class="btn btn-primary">+ ახალი ობიექტი</button>
+          </div>
+        </header>
 
-            <div class="pipeline-stages" id="pipelineStages">
-              <!-- JS აავსებს -->
-            </div>
-          </article>
+        <section class="panel">
+          <h2 class="panel-title">ობიექტების გვერდი მომზადების პროცესშია</h2>
+          <p class="panel-sub">
+            აქ იქნება სრული საცრელი უბნების, ფასის, სტატუსის მიხედვით და სწრაფი ძებნა.
+          </p>
+        </section>
+      </section>
 
-          <!-- Today showings & tasks -->
-          <article class="panel">
-            <header class="panel-header">
-              <h2 class="panel-title">დღევანდელი ჩვენებები &amp; დავალებები</h2>
-            </header>
+      <!-- CLIENTS SECTION -->
+      <section id="clientsSection" class="page-section">
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">GADELA · Clients</div>
+            <h1 class="app-title">კლიენტების ბაზა</h1>
+          </div>
+        </header>
 
-            <div class="split-two">
-              <div>
-                <h3 class="panel-subtitle">ჩვენებები</h3>
-                <ul class="list list-showings" id="todayShowingsList">
-                  <!-- JS -->
-                </ul>
-              </div>
-              <div>
-                <h3 class="panel-subtitle">დავალებები</h3>
-                <ul class="list list-tasks" id="todayTasksList">
-                  <!-- JS -->
-                </ul>
-              </div>
-            </div>
-          </article>
-        </div>
+        <section class="panel">
+          <h2 class="panel-title">კლიენტების მოდული მალე დაემატება</h2>
+          <p class="panel-sub">
+            Buyer / Seller / Landlord / Tenant პროფილები, კომუნიკაციის ისტორია და სხვა დეტალები.
+          </p>
+        </section>
+      </section>
 
-        <!-- Right column -->
-        <div class="dashboard-col">
-          <!-- SLA risk -->
-          <article class="panel">
-            <header class="panel-header">
-              <h2 class="panel-title">SLA რისკის ქვეშ მყოფი ლიდები</h2>
-              <span class="chip chip-warning" id="slaRiskCountChip">0</span>
-            </header>
-            <ul class="list list-sla" id="slaRiskList">
-              <!-- JS -->
-            </ul>
-          </article>
+      <!-- DEALS SECTION -->
+      <section id="dealsSection" class="page-section">
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">GADELA · Deals</div>
+            <h1 class="app-title">Deals &amp; მოლაპარაკებები</h1>
+          </div>
+        </header>
 
-          <!-- Recent activity -->
-          <article class="panel">
-            <header class="panel-header">
-              <h2 class="panel-title">ბოლო აქტივობები</h2>
-              <button class="btn btn-ghost btn-xs" id="clearActivityBtn">
-                გასუფთავება
-              </button>
-            </header>
-            <ul class="list list-activity" id="activityFeed">
-              <!-- JS -->
-            </ul>
-          </article>
-        </div>
+        <section class="panel">
+          <h2 class="panel-title">Deals დაფა დამუშავების პროცესშია</h2>
+          <p class="panel-sub">
+            აქ გექნება stage-ები, სავარაუდო შემოსავალი, won/lost სტატისტიკა და გუნდის KPI-ები.
+          </p>
+        </section>
+      </section>
+
+      <!-- TASKS SECTION -->
+      <section id="tasksSection" class="page-section">
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">GADELA · Tasks & Calendar</div>
+            <h1 class="app-title">დავალებები &amp; კალენდარი</h1>
+          </div>
+        </header>
+
+        <section class="panel">
+          <h2 class="panel-title">დავალებების/კალენდრის მოდული მზადდება</h2>
+          <p class="panel-sub">
+            Google Calendar / Outlook ინტეგრაცია, ჩვენებების გზები და push-შეხსენებები.
+          </p>
+        </section>
+      </section>
+
+      <!-- REPORTS SECTION -->
+      <section id="reportsSection" class="page-section">
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">GADELA · Reports & KPI</div>
+            <h1 class="app-title">რეპორტები &amp; KPI</h1>
+          </div>
+        </header>
+
+        <section class="panel">
+          <h2 class="panel-title">Analytics დაფა მომდევნო ფაზაში შევა</h2>
+          <p class="panel-sub">
+            Conversion, Time-to-First-Contact, Pipeline Velocity და სხვა მეტრიკები.
+          </p>
+        </section>
+      </section>
+
+      <!-- SETTINGS SECTION -->
+      <section id="settingsSection" class="page-section">
+        <header class="app-header">
+          <div>
+            <div class="app-breadcrumb">GADELA · Settings</div>
+            <h1 class="app-title">პარამეტრები</h1>
+          </div>
+        </header>
+
+        <section class="panel">
+          <h2 class="panel-title">პარამეტრების გვერდი დამუშავების პროცესშია</h2>
+          <p class="panel-sub">
+            აქ კონფიგურირდება გუნდები, როლები, უფლებები, საკომისიო მოდელები და ინტეგრაციები.
+          </p>
+        </section>
       </section>
     </main>
   </div>
